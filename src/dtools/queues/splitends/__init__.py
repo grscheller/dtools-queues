@@ -20,12 +20,10 @@ data structures can safely share data nodes between themselves.
 
 #### Package splitend modules
 
-- module **dtools.queues.splitends.splitend: SplitEnd queue
-- module **dtools.queues.splitends._splitend_node: Data node for a SplitEnd queue
+- module **dtools.queues.splitends.splitend**: SplitEnd queue
+- module **dtools.queues.splitends.splitend_node**: Data node for a SplitEnd queue
 
 """
-
-__all__ = ['splitend', '_splitend_node', '__author__', '__copyright__', '__license__']
 
 __author__ = 'Geoffrey R. Scheller'
 __copyright__ = 'Copyright (c) 2024-2025 Geoffrey R. Scheller'

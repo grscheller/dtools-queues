@@ -19,10 +19,9 @@ With use I am finding this data structure needs some sort of supporting
 infrastructure. Hence I split the original splitend module out to be its own
 subpackage.
 
-#### SplitEnd Stack type and SE factory function
+#### SplitEnd Stack type
 
 * class SplitEnd: Singularly linked stack with shareable data nodes
-* function SE: create SplitEnd from a variable number of arguments
 
 """
 
@@ -31,9 +30,9 @@ from __future__ import annotations
 from collections.abc import Callable, Iterator
 from typing import Never, TypeVar
 from dtools.fp.err_handling import MB
-from ._splitend_node import _SENode
+from .splitend_node import _SENode as Node
 
-__all__ = ('SplitEnd',)
+__all__ = ['SplitEnd']
 
 D = TypeVar('D')  # Not needed for mypy, hint for pdoc.
 T = TypeVar('T')
@@ -54,14 +53,19 @@ class SplitEnd[D]:
 
     """
 
-    __slots__ = '_count', '_top'
+    __slots__ = '_count', '_top', '_root'
 
     def __init__(self, *ds: D) -> None:
         self._count = 0
-        self._top: MB[_SENode[D]] = MB()
-        for d in ds:
-            node = _SENode(d, self._top)
-            self._top, self._count = MB(node), self._count + 1
+        self._top: MB[Node[D]] = MB()
+        self._root: MB[Node[D]] = MB()
+        if len(ds) > 0:
+            node = Node(ds[0], self._top)
+            self._top = self._root = MB(node)
+            self._count = 1
+            for d in ds[1:]:
+                node = Node(d, self._top)
+                self._top, self._count = MB(node), self._count + 1
 
     def __iter__(self) -> Iterator[D]:
         if self._top == MB():
@@ -104,30 +108,33 @@ class SplitEnd[D]:
             if left:
                 left = left._prev.get()
                 right = right._prev.get()
-
         return True
 
     def push(self, *ds: D) -> None:
         """Push data onto the top of the SplitEnd."""
-        for d in ds:
-            node = _SENode(d, self._top)
-            self._top, self._count = MB(node), self._count + 1
+        if len(ds) > 0:
+            node = Node(ds[0], self._top)
+            if self._top:
+                self._top, self._count = MB(node), self._count + 1
+            else:
+                self._top = self._root = MB(node)
+                self._count = 1
+            for d in ds[1:]:
+                node = Node(d, self._top)
+                self._top, self._count = MB(node), self._count + 1
 
-    def pop(self, default: D | None = None, /) -> D | Never:
+    def pop(self) -> MB[D]:
         """Pop data off of the top of the SplitEnd.
 
-        * raises ValueError if
-          * popping from an empty SplitEnd
-          * and no default value was given
+        Return MB of top data, if not empty, otherwise return MB().
 
         """
-        if self._count == 0:
-            if default is None:
-                raise ValueError('SE: Popping from an empty SplitEnd')
-            return default
-
-        data, self._top, self._count = self._top.get().pop2() + (self._count - 1,)
-        return data
+        if self._count > 0:
+            data, self._top, self._count = self._top.get().pop2() + (self._count - 1,)
+            if self._count == 0:
+                self._root = self._top
+            return MB(data)
+        return MB()
 
     def peak(self, default: D | None = None, /) -> D:
         """Return the data at the top of the SplitEnd.
@@ -140,7 +147,6 @@ class SplitEnd[D]:
             if default is None:
                 raise ValueError('SE: Popping from an empty SplitEnd')
             return default
-
         return self._top.get().get_data()
 
     def copy(self) -> SplitEnd[D]:
@@ -162,9 +168,7 @@ class SplitEnd[D]:
         """
         if self._top != MB():
             return self._top.get().fold(f, init)
-
         if init is not None:
             return init
-
         msg = 'SE: Folding empty SplitEnd but no initial value supplied'
         raise ValueError(msg)

@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 from dtools.fp.err_handling import MB
-from dtools.queues.splitends._splitend_node import _SENode as Node
+from dtools.queues.splitends.splitend_node import _SENode as Node
 
 class Test_Node:
     def test_bool(self) -> None:

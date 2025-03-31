@@ -15,20 +15,22 @@
 """
 ### Developer Tools - Queue based data structures
 
-#### Modules and sub-packages
+#### Modules
 
 - module dtools.queues.restrictive
   - mutable data structures geared to specific algorithmic use cases
-    - FIFOQueue - First In First Out Queue
-    - LIFOQueue - Last In First Out Queue
-    - DoubleQueue - Double-ended Queue
-- package dtools.splitends
+    - FIFOQueue: First In First Out Queue
+    - LIFOQueue: Last In First Out Queue
+    - DoubleQueue: Double-ended Queue
+- module dtools.queues.splitends
   - mutable LIFO queues (stacks)
-    - which still allow for data sharing between different instances
+    - which allow for data sharing between different instances
+    - multiple instances can form bush like data structures
+      - like a follicles of hair with split ends
 
 """
 
-__version__ = '0.26.0.1'
+__version__ = '0.26.0.2'
 __author__ = 'Geoffrey R. Scheller'
 __copyright__ = 'Copyright (c) 2023-2025 Geoffrey R. Scheller'
 __license__ = 'Apache License 2.0'

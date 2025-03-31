@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-### Data nodes used privately by class SplitEnd
+### Data node class used privately by class SplitEnd
 
 Node classes used with graph-like data structures. API designed to be used by
 other data structures which contain these data structures.

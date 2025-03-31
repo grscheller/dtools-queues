@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 from dtools.queues.splitends.splitend import SplitEnd as SE
+from dtools.fp.err_handling import MB
 from dtools.fp.iterables import concat
 
 class Test_SplitEnds:
@@ -26,30 +27,24 @@ class Test_SplitEnds:
         pushed = 21
         s1.push(pushed)
         popped = s1.pop()
-        assert pushed == popped == 21
+        assert pushed == popped == MB(21)
 
     def test_popFromEmptySplitEnd(self) -> None:
         s1 = SE(-42)
         popped = s1.pop()
-        assert popped == -42
-        try:
-            popped = s1.pop()
-            assert False
-        except ValueError:
-            assert True
-        else:
-            assert False
+        assert popped == MB(-42)
+        assert popped == MB()
 
-        s2 = SE(1, 2, 3, 42)
+        s2 = SE(1, 2, 3, 2, 2, 42)
         nums: set[int] = set()
         while s2:
-            nums.add(s2.pop())         # pop until empty
+            nums.add(s2.pop().get())         # pop until empty
         assert nums == {2, 1, 42, 3}
         assert not s2
         s2.push(42)
         try:
             assert s2.peak() == 40+2
-            assert s2.pop() == 42
+            assert s2.pop() == MB(42)
             assert s2.peak() == 1
             assert False
         except ValueError:
@@ -128,8 +123,8 @@ class Test_SplitEnds:
 #       assert s1.tail() == SE(roots_str, "fum")
 
     def test_stackIter(self) -> None:
-        giantSplitEnd: SE[str] = SE(*[' Fum', ' Fo', ' Fi', 'Fe'])
-        giantTalk = giantSplitEnd.pop()
+        giantSplitEnd: SE[str] = SE(' Fum', ' Fo', ' Fi', 'Fe')
+        giantTalk = giantSplitEnd.pop().get('I smell the blood of an Englishman')
         assert giantTalk == "Fe"
         for giantWord in giantSplitEnd:
             giantTalk += giantWord
@@ -216,10 +211,10 @@ class Test_SplitEnds:
         assert s3.peak() is None
         assert s3
         assert len(s3) == 4
-        assert s3.pop() is None
-        assert s3.pop() == 42
-        assert s3.pop() == 24
-        assert s3.pop() is None
+        assert s3.pop() == MB(None)
+        assert s3.pop() == MB(42)
+        assert s3.pop() == MB(24)
+        assert s3.pop() is MB(None)
         assert len(s3) == 0
         s3.push(None)
         s3.push(42)
