@@ -17,16 +17,16 @@
 
 #### Modules
 
-- module dtools.queues.restrictive
+- *module* dtools.queues.restrictive
   - mutable data structures geared to specific algorithmic use cases
-    - FIFOQueue: First In First Out Queue
-    - LIFOQueue: Last In First Out Queue
-    - DoubleQueue: Double-ended Queue
+    - *class* FIFOQueue: First In First Out Queue
+    - *class* LIFOQueue: Last In First Out Queue
+    - *class* DoubleQueue: Double-ended Queue
 - module dtools.queues.splitends
   - mutable LIFO queues (stacks)
     - which allow for data sharing between different instances
     - multiple instances can form bush like data structures
-      - like a follicles of hair with split ends
+      - like follicles of hair with split ends
 
 """
 

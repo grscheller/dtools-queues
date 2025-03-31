@@ -1,8 +1,7 @@
 # Developer Tools - queues useful for algorithms
 
 Python package containing modules implementing queue-like data
-structures
-implementation of algorithms.
+structures.
 
 - **Repositories**
   - [dtools.queues][1] project on *PyPI*
@@ -26,10 +25,10 @@ Sometimes the real power of a data structure comes not from what it
 empowers you to do, but from what it prevents you from doing to
 yourself.
 
-- *module* `dtools.queues.restrictive`
-  - *class* `FIFOQueue`: First-In-First-Out Queue
-  - *class* `LIFOQueue`: Last-In-First-Out Queue
-  - *class* `DoubleQueue`: Double-Sided Queue
+- *module* dtools.queues.restrictive
+  - *class* FIFOQueue: First-In-First-Out Queue
+  - *class* LIFOQueue: Last-In-First-Out Queue
+  - *class* DoubleQueue: Double-Sided Queue
 
 These queues are restricted to certain types of data access. They all 
 allow iterators to leisurely iterate over inaccessible copies
@@ -37,15 +36,18 @@ of internal state while the data structures themselves are free to
 safely mutate. They are designed to be reasonably "atomic" without
 introducing inordinate complexity.
 
+______________________________________________________________________
+
 ### Split-ends queue module
 
 Data structures allowing data to be safely shared between multiple data
 structure instances by making shared data immutable and inaccessible to
 client code.
 
-- *module* `dtools.queues.splitends`
-  - *class* `SplitEnd`: Singularly link stack with shareable data nodes
-  - *function* `splitend`: Creates a splitend from data
+- *module* dtools.queues.splitends.splitend`
+  - *class* SplitEnd: Singularly link stack with shareable data nodes
+- *module* dtools.queues.splitends.splitend_node
+  - *class* _SENode: private node class used by class SplitEnd 
 
 ______________________________________________________________________
 
