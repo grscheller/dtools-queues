@@ -25,7 +25,6 @@ dependencies = [
 ]
 dynamic = ["version", "description"]
 keywords = [
-    "datastructures", "data structures",
     "fifo", "lifo", "stack", "queue", "SplitEnd"
 ] 
 
@@ -38,7 +37,7 @@ Changelog = "https://github.com/grscheller/dtools-queues/blob/main/CHANGELOG.md"
 Documentation = "https://grscheller.github.io/dtools-docs/queues"
 
 [tool.flit.sdist]
-exclude = ["dist", ".gitignore", ".mypy_cache", ".pytest_cache"]
+exclude = ["dist", "tests", ".gitignore", ".mypy_cache", ".pytest_cache"]
 
 [tool.pylsp-mypy]
 enabled = true
