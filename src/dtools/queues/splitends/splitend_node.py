@@ -32,19 +32,19 @@ T = TypeVar('T')
 class _SENode[D]:
     """Data node for class SplitEnd 
 
-    * data node for a top-to-root singularly linked list.
-    * designed so multiple splitends can safely share the same data
-    * this type of node always
-      * contain data
-      * potential link to previous node
-    * nodes point towards a unique "bottom node" with no predecessor
-      * in a Boolean context returns true if not at the bottom
-      * multiple bottom nodes can exist
-    * two nodes compare as equal if
-      * both their previous Nodes are the same
-      * their data compares as equal
-    * more than one node can point to the same proceeding node
-      * forming bush like graphs
+    - data node for a top-to-root singularly linked list.
+    - designed so multiple splitends can safely share the same data
+    - this type of node always
+      - contain data
+      - potential link to previous node
+    - nodes point towards a unique "bottom node" with no predecessor
+      - in a Boolean context returns true if not at the bottom
+      - multiple bottom nodes can exist
+    - two nodes compare as equal if
+      - both their previous Nodes are the same
+      - their data compares as equal
+    - more than one node can point to the same proceeding node
+      - forming bush like graphs
 
     """
 
@@ -87,9 +87,9 @@ class _SENode[D]:
     def fold[T](self, f: Callable[[T, D], T], init: T | None = None) -> T:
         """Reduce data across linked nodes.
 
-        * with a function and an optional starting value
-        * reduces in natural LIFO order
-          * from self to the root
+        - with a function and an optional starting value
+        - reduces in natural LIFO order
+          - from self to the root
 
         """
         if init is None:

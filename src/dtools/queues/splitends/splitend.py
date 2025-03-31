@@ -21,7 +21,7 @@ subpackage.
 
 #### SplitEnd Stack type
 
-* class SplitEnd: Singularly linked stack with shareable data nodes
+- class SplitEnd: Singularly linked stack with shareable data nodes
 
 """
 
@@ -43,42 +43,36 @@ class SplitEnd[D]:
 
     LIFO stacks which can safely share immutable data between themselves.
 
-    * each SplitEnd is a very simple stateful (mutable) LIFO stack
-    * data can be pushed and popped to the stack
-    * different mutable split ends can safely share the same "tail"
-    * each SplitEnd sees itself as a singularly linked list
-    * bush-like datastructures can be formed using multiple SplitEnds
-    * len() returns the number of elements on the SplitEnd stack
-    * in boolean context, return true if split end is not empty
+    - each SplitEnd is a very simple stateful (mutable) LIFO stack
+    - data can be pushed and popped to the stack
+    - the first value pushed onto the SplitEnd becomes it "root"
+    - different mutable split ends can safely share the same "tail"
+    - each SplitEnd sees itself as a singularly linked list
+    - bush-like datastructures can be formed using multiple SplitEnds
+    - len() returns the number of elements on the SplitEnd stack
+    - in boolean context, return true if split end is not rootless (empty)
 
     """
 
     __slots__ = '_count', '_top', '_root'
 
-    def __init__(self, *ds: D) -> None:
-        self._count = 0
-        self._top: MB[Node[D]] = MB()
-        self._root: MB[Node[D]] = MB()
-        if len(ds) > 0:
-            node = Node(ds[0], self._top)
-            self._top = self._root = MB(node)
-            self._count = 1
-            for d in ds[1:]:
-                node = Node(d, self._top)
-                self._top, self._count = MB(node), self._count + 1
+    def __init__(self, root: D, *ds: D) -> None:
+        node = Node(root, MB[Node[D]]())
+        self._root = MB(node)
+        self._top, self._count = self._root, 1
+        for d in ds:
+            node = Node(d, self._top)
+            self._top, self._count = MB(node), self._count + 1
 
     def __iter__(self) -> Iterator[D]:
-        if self._top == MB():
-            empty: tuple[D, ...] = ()
-            return iter(empty)
         return iter(self._top.get())
 
     def __reversed__(self) -> Iterator[D]:
         return reversed(list(self))
 
     def __bool__(self) -> bool:
-        # Returns true if not a root node
-        return bool(self._top)
+        # Returns true until all data is exhausted
+        return bool(self._top.get())
 
     def __len__(self) -> int:
         return self._count
@@ -95,8 +89,6 @@ class SplitEnd[D]:
 
         if self._count != other._count:
             return False
-        if self._count == 0:
-            return True
 
         left = self._top.get()
         right = other._top.get()
@@ -112,61 +104,39 @@ class SplitEnd[D]:
 
     def push(self, *ds: D) -> None:
         """Push data onto the top of the SplitEnd."""
-        if len(ds) > 0:
-            node = Node(ds[0], self._top)
-            if self._top:
-                self._top, self._count = MB(node), self._count + 1
-            else:
-                self._top = self._root = MB(node)
-                self._count = 1
-            for d in ds[1:]:
-                node = Node(d, self._top)
-                self._top, self._count = MB(node), self._count + 1
+        for d in ds:
+            node = Node(d, self._top)
+            self._top, self._count = MB(node), self._count + 1
 
-    def pop(self) -> MB[D]:
+    def pop(self) -> D | Never:
         """Pop data off of the top of the SplitEnd.
 
-        Return MB of top data, if not empty, otherwise return MB().
+        - re-root SplitEnd if root is popped off.
 
         """
-        if self._count > 0:
-            data, self._top, self._count = self._top.get().pop2() + (self._count - 1,)
-            if self._count == 0:
-                self._root = self._top
-            return MB(data)
-        return MB()
+        data, self._top, self._count = self._top.get().pop2() + (self._count - 1,)
+        if self._count == 0:
+            self._count, self._top = 1, self._root
+        return data
 
     def peak(self, default: D | None = None, /) -> D:
-        """Return the data at the top of the SplitEnd.
-
-        * does not consume the data
-        * raises ValueError if peaking at an empty SplitEnd
-
-        """
-        if self._count == 0:
-            if default is None:
-                raise ValueError('SE: Popping from an empty SplitEnd')
-            return default
+        """Return the data at the top of the SplitEnd, doesn't consume it."""
         return self._top.get().get_data()
 
     def copy(self) -> SplitEnd[D]:
         """Return a copy of the SplitEnd.
 
-        * O(1) space & time complexity.
-        * returns a new instance
+        - O(1) space & time complexity.
+        - returns a new instance with same data, including the root
 
         """
-        se: SplitEnd[D] = SplitEnd()
-        se._top, se._count = self._top, self._count
+        se: SplitEnd[D] = SplitEnd(self._root.get().get_data())
+        se._count, se._top, se._root = self._count, self._top, self._root
         return se
 
     def fold[T](self, f: Callable[[T, D], T], init: T | None = None, /) -> T | Never:
-        """Reduce with a function.
-
-        * folds in natural LIFO Order
-
-        """
-        if self._top != MB():
+        """Reduce with a function, fold in natural LIFO Order."""
+        if self._top:
             return self._top.get().fold(f, init)
         if init is not None:
             return init

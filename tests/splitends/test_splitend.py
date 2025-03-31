@@ -27,104 +27,90 @@ class Test_SplitEnds:
         pushed = 21
         s1.push(pushed)
         popped = s1.pop()
-        assert pushed == popped == MB(21)
+        assert pushed == popped == 21
 
-    def test_popFromEmptySplitEnd(self) -> None:
-        s1 = SE(-42)
-        popped = s1.pop()
-        assert popped == MB(-42)
-        assert popped == MB()
-
-        s2 = SE(1, 2, 3, 2, 2, 42)
-        nums: set[int] = set()
-        while s2:
-            nums.add(s2.pop().get())         # pop until empty
-        assert nums == {2, 1, 42, 3}
-        assert not s2
-        s2.push(42)
+    def test_popFromOneElementSplitEnd(self) -> None:
+        s1 = SE[int](42)
         try:
-            assert s2.peak() == 40+2
-            assert s2.pop() == MB(42)
-            assert s2.peak() == 1
-            assert False
+            assert s1.pop() == 42
+            assert s1.pop() == 42
         except ValueError:
-            assert True
-        else:
             assert False
+        else:
+            assert s1.pop() == 42
 
     def test_SplitEndPushPop(self) -> None:
-        s0: SE[int] = SE()
         s1 = SE(101)
         s2 = SE(*range(0,2000))
 
-        assert len(s0) == 0
         assert len(s1) == 1
         assert len(s2) == 2000
-        s0.push(21)
         s1.push(42)
         assert s2.pop() == 1999
         assert s2.pop() == 1998
-        assert len(s0) == 1
         assert len(s1) == 2
         assert len(s2) == 1998
         assert s1.pop() == 42
-        assert s1.pop() == 101
+        assert s1.pop() == 101     # re-rooted
         s1.push(12, 13, 14)
-        assert len(s1) == 3
+        assert len(s1) == 4
         assert s1.pop() == 14
         assert s1.pop() == 13
-        assert len(s1) == 1
+        assert len(s1) == 2
         assert s1.pop() == 12
-        assert len(s1) == 0
+        assert len(s1) == 1
+        assert s1.pop() == 101
+        assert len(s1) == 1
+        assert s1.pop() == 101
+        assert len(s1) == 1
+
 
     def test_SplitEnd_len(self) -> None:
         s1: SE[int|None] = SE(None)
         s2: SE[int|None] = SE(None, 42)
-        s2001: SE[int|None] = SE(None, *range(1,2001))
 
         assert len(s1) == 1
-        if s2001:
-            assert len(s2001) == 2001
-        else:
-            assert False
         if s1:
             assert True
-        s3 = s1.copy()
+
         assert len(s1) == 1
         assert s1.pop() is None
-        assert len(s1) == 0
-        assert len(s3) == 1
-        assert s3.pop() is None
-        assert len(s3) == 0
-        s4: SE[int|None]|None = s3 if s3 else None
-        assert s4 is None
+        assert len(s1) == 1
+        assert s1.pop() is None
+        assert len(s1) == 1
+        assert len(s2) == 2
+        assert s2.pop() == 42
+        assert len(s2) == 1
+        assert s2.pop() is None
+        assert len(s2) == 1
+        assert s2.pop() is None
+        assert len(s2) == 1
+
+        s2001: SE[int] = SE(*range(1,2001))
+        if s2001:
+            assert len(s2001) == 2000
+        else:
+            assert False
+
+        s3 = s2001.copy()
+        assert len(s3) == 2000
+        assert s3 == s2001
+        assert s3.pop() == 2000
+        assert s3.pop() == 1999
+        assert s3 != s2001
         assert s2001.pop() == 2000
         assert s2001.pop() == 1999
-        assert len(s1) == 0
-        assert len(s2) == 2
-        assert len(s2001) == 1999
         assert s2001.pop() == 1998
-        assert len(s2001) == 1998
+        assert s3 != s2001
+        assert s3.pop() == 1998
+        assert s3 == s2001
         assert s2001.peak() == 1997
-
-#   def test_tailcons(self) -> None:
-#       s1: SE[str] = SE(roots_str, "fum")
-#       s1 = s1.cons("fo").cons("fi").cons("fe")
-#       assert type(s1) == SE
-#       s2 = s1.tail()
-#       if s2 is None:
-#           assert False
-#       s3 = s2.cons("fe")
-#       assert s3 == s1
-#       while s1:
-#           s1 = s1.tail()
-#       assert s1.head() == "fum"
-#   #   assert s1.tail().cons('foo') is SE(roots_str, "fum").cons('foo') # TODO: Drop mutating methods and make this true???
-#       assert s1.tail() == SE(roots_str, "fum")
+        assert len(s3) == 1997
+        assert len(s2001) == 1997
 
     def test_stackIter(self) -> None:
         giantSplitEnd: SE[str] = SE(' Fum', ' Fo', ' Fi', 'Fe')
-        giantTalk = giantSplitEnd.pop().get('I smell the blood of an Englishman')
+        giantTalk = giantSplitEnd.pop()
         assert giantTalk == "Fe"
         for giantWord in giantSplitEnd:
             giantTalk += giantWord
@@ -211,12 +197,11 @@ class Test_SplitEnds:
         assert s3.peak() is None
         assert s3
         assert len(s3) == 4
-        assert s3.pop() == MB(None)
-        assert s3.pop() == MB(42)
-        assert s3.pop() == MB(24)
-        assert s3.pop() is MB(None)
-        assert len(s3) == 0
-        s3.push(None)
+        assert s3.pop() is None
+        assert s3.pop() == 42
+        assert s3.pop() == 24
+        assert s3.pop() is None
+        assert len(s3) == 1
         s3.push(42)
         s4 = SE(None, 42)
         assert s3 == s4
