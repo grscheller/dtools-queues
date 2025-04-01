@@ -296,7 +296,7 @@ class TestQueueTypes:
         assert lq.pop() == MB()
 
     def test_iterators(self) -> None:
-        data_d = FT([1, 2, 3, 4, 5])
+        data_d = FT(1, 2, 3, 4, 5)
         data_mb = data_d.map(lambda d: MB(d))
         dq: DQ[MB[int]] = DQ(*data_mb)
         ii = 0
