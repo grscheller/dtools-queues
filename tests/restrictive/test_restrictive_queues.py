@@ -15,7 +15,7 @@
 from __future__ import annotations
 from typing import Optional
 from dtools.circular_array.ca import CA
-from dtools.datastructures.tuples import FTuple as FT
+from dtools.tuples.ftuple import FTuple as FT
 from dtools.queues.restrictive import DoubleQueue as DQ
 from dtools.queues.restrictive import FIFOQueue as FQ
 from dtools.queues.restrictive import LIFOQueue as LQ
