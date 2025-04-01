@@ -1,4 +1,4 @@
-# Developer Tools - queues useful for algorithms
+# Developer Tools - Queues
 
 Python package containing modules implementing queue-like data
 structures.
@@ -9,8 +9,8 @@ structures.
 - **Detailed documentation**
   - [Detailed API documentation][3] on *GH-Pages*
 
-This project is part of the
-[Developer Tools for Python][4] **dtools.** namespace project.
+This project is part of the [Developer Tools for Python][4] **dtools.**
+namespace project.
 
 ## Overview
 
@@ -21,24 +21,24 @@ cases.
 
 ### Restrictive queues module
 
-Sometimes the real power of a data structure comes not from what it
-empowers you to do, but from what it prevents you from doing to
-yourself.
+Queues which limit the developer to certain types of data access. They
+allow iterators to leisurely iterate over inaccessible copies of
+internal state while the data structures themselves are free to safely
+mutate. They are designed to be reasonably "atomic" without introducing
+inordinate complexity.
 
 - *module* dtools.queues.restrictive
   - *class* FIFOQueue: First-In-First-Out Queue
   - *class* LIFOQueue: Last-In-First-Out Queue
   - *class* DoubleQueue: Double-Sided Queue
 
-These queues are restricted to certain types of data access. They all 
-allow iterators to leisurely iterate over inaccessible copies
-of internal state while the data structures themselves are free to
-safely mutate. They are designed to be reasonably "atomic" without
-introducing inordinate complexity.
+Sometimes the real power of a data structure comes not from what it
+empowers you to do, but from what it prevents you from doing to
+yourself.
 
 ______________________________________________________________________
 
-### Split-ends queue module
+### Package splitends
 
 Data structures allowing data to be safely shared between multiple data
 structure instances by making shared data immutable and inaccessible to
