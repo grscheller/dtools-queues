@@ -29,8 +29,8 @@ D = TypeVar('D')  # Not needed for mypy, hint for pdoc.
 T = TypeVar('T')
 
 
-class _SENode[D]:
-    """Data node for class SplitEnd 
+class SENode[D]:
+    """Data node for class SplitEnd
 
     - data node for a top-to-root singularly linked list.
     - designed so multiple splitends can safely share the same data
@@ -50,7 +50,7 @@ class _SENode[D]:
 
     __slots__ = '_data', '_prev'
 
-    def __init__(self, data: D, prev: MB[_SENode[D]]) -> None:
+    def __init__(self, data: D, prev: MB[SENode[D]]) -> None:
         self._data = data
         self._prev = prev
 
@@ -64,7 +64,7 @@ class _SENode[D]:
     def __bool__(self) -> bool:
         return self._prev != MB()
 
-    def data_eq(self, other: _SENode[D]) -> bool:
+    def data_eq(self, other: SENode[D]) -> bool:
         """Return true if other node has same or equal data."""
         if self._data is other._data:
             return True
@@ -76,9 +76,7 @@ class _SENode[D]:
         if not isinstance(other, type(self)):
             return False
 
-        if self._prev == other._prev and self.data_eq(other):
-                return True
-        return False
+        return self._prev == other._prev and self.data_eq(other)
 
     def get_data(self) -> D:
         """Return contained data"""
@@ -105,10 +103,10 @@ class _SENode[D]:
         acc = f(acc, node._data)
         return acc
 
-    def pop2(self) -> tuple[D, MB[_SENode[D]]]:
+    def pop2(self) -> tuple[D, MB[SENode[D]]]:
         """Return the data in the *head* and potential *tail*."""
         return self._data, self._prev
 
-    def push_data(self, data: D) -> _SENode[D]:
+    def push_data(self, data: D) -> SENode[D]:
         """Push data onto the queue and return a new node containing the data."""
-        return _SENode(data, MB(self))
+        return SENode(data, MB(self))

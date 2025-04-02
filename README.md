@@ -47,7 +47,7 @@ client code.
 - *module* dtools.queues.splitends.splitend`
   - *class* SplitEnd: Singularly link stack with shareable data nodes
 - *module* dtools.queues.splitends.splitend_node
-  - *class* _SENode: private node class used by class SplitEnd 
+  - *class* SENode: private node class used by class SplitEnd 
 
 ______________________________________________________________________
 

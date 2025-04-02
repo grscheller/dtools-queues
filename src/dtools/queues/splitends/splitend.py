@@ -30,7 +30,7 @@ from __future__ import annotations
 from collections.abc import Callable, Iterator
 from typing import Never, TypeVar
 from dtools.fp.err_handling import MB
-from .splitend_node import _SENode as Node
+from .splitend_node import SENode as Node
 
 __all__ = ['SplitEnd']
 
@@ -119,7 +119,7 @@ class SplitEnd[D]:
             self._count, self._top = 1, self._root
         return data
 
-    def peak(self, default: D | None = None, /) -> D:
+    def peak(self) -> D:
         """Return the data at the top of the SplitEnd, doesn't consume it."""
         return self._top.get().get_data()
 

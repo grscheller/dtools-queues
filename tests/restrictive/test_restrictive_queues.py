@@ -24,10 +24,10 @@ from dtools.fp.err_handling import MB
 class TestQueueTypes:
     def test_mutate_map(self) -> None:
         dq1: DQ[int] = DQ()
-        dq1.pushL(1,2,3)
-        dq1.pushR(1,2,3)
+        dq1.pushl(1,2,3)
+        dq1.pushr(1,2,3)
         dq2 = dq1.map(lambda x: x-1)
-        assert dq2.popL() == dq2.popR() == MB(2)
+        assert dq2.popl() == dq2.popr() == MB(2)
 
         def add_one_if_int(x: int|str) -> int|str:
             if type(x) is int:
@@ -61,35 +61,35 @@ class TestQueueTypes:
     def test_push_then_pop(self) -> None:
         dq1 = DQ[int]()
         pushed_1 = 42
-        dq1.pushL(pushed_1)
-        popped_1 = dq1.popL()
+        dq1.pushl(pushed_1)
+        popped_1 = dq1.popl()
         assert MB(pushed_1) == popped_1
         assert len(dq1) == 0
         pushed_1 = 0
-        dq1.pushL(pushed_1)
-        popped_1 = dq1.popR()
+        dq1.pushl(pushed_1)
+        popped_1 = dq1.popr()
         assert pushed_1 == popped_1.get(-1) == 0
         assert not dq1
         pushed_1 = 0
-        dq1.pushR(pushed_1)
-        popped_2 = dq1.popL().get(1000)
+        dq1.pushr(pushed_1)
+        popped_2 = dq1.popl().get(1000)
         assert popped_2 != 1000
         assert pushed_1 == popped_2
         assert len(dq1) == 0
 
         dq2: DQ[str] = DQ()
         pushed_3 = ''
-        dq2.pushR(pushed_3)
-        popped_3 = dq2.popR().get('hello world')
+        dq2.pushr(pushed_3)
+        popped_3 = dq2.popr().get('hello world')
         assert pushed_3 == popped_3
         assert len(dq2) == 0
-        dq2.pushR('first')
-        dq2.pushR('second')
-        dq2.pushR('last')
-        assert dq2.popL() == MB('first')
-        assert dq2.popR() == MB('last')
+        dq2.pushr('first')
+        dq2.pushr('second')
+        dq2.pushr('last')
+        assert dq2.popl() == MB('first')
+        assert dq2.popr() == MB('last')
         assert dq2
-        dq2.popL()
+        dq2.popl()
         assert len(dq2) == 0
 
         fq: FQ[MB[int|str]] = FQ()
@@ -188,8 +188,8 @@ class TestQueueTypes:
     def test_pushing_None(self) -> None:
         dq1: DQ[Optional[int]] = DQ()
         dq2: DQ[Optional[int]] = DQ()
-        dq1.pushR(None)
-        dq2.pushL(None)
+        dq1.pushr(None)
+        dq2.pushl(None)
         assert dq1 == dq2
 
         def is42(ii: int) -> Optional[int]:
@@ -204,32 +204,32 @@ class TestQueueTypes:
     def test_bool_len_peak(self) -> None:
         dq: DQ[int] = DQ()
         assert not dq
-        dq.pushL(2,1)
-        dq.pushR(3)
+        dq.pushl(2,1)
+        dq.pushr(3)
         assert dq
         assert len(dq) == 3
-        assert dq.popL() == MB(1)
+        assert dq.popl() == MB(1)
         assert len(dq) == 2
         assert dq
-        assert dq.peakL() == MB(2)
-        assert dq.peakR() == MB(3)
-        assert dq.popR() == MB(3)
+        assert dq.peakl() == MB(2)
+        assert dq.peakr() == MB(3)
+        assert dq.popr() == MB(3)
         assert len(dq) == 1
         assert dq
-        assert dq.popL() == MB(2)
+        assert dq.popl() == MB(2)
         assert len(dq) == 0
         assert not dq
         assert len(dq) == 0
         assert not dq
-        dq.pushR(42)
+        dq.pushr(42)
         assert len(dq) == 1
         assert dq
-        assert dq.peakL() == MB(42)
-        assert dq.peakR() == MB(42)
-        assert dq.popR() == MB(42)
+        assert dq.peakl() == MB(42)
+        assert dq.peakr() == MB(42)
+        assert dq.popr() == MB(42)
         assert not dq
-        assert dq.peakL() == MB()
-        assert dq.peakR() == MB()
+        assert dq.peakl() == MB()
+        assert dq.peakr() == MB()
 
         fq: FQ[int] = FQ()
         assert not fq
@@ -313,14 +313,14 @@ class TestQueueTypes:
         dq1: DQ[MB[bool]] = DQ(*data_bool_mb)
         for _ in dq1:
             assert False
-        dq1.pushR(MB(True))
-        dq1.pushL(MB(True))
-        dq1.pushR(MB(True))
-        dq1.pushL(MB(False))
-        assert not dq1.popL().get(True)
+        dq1.pushr(MB(True))
+        dq1.pushl(MB(True))
+        dq1.pushr(MB(True))
+        dq1.pushl(MB(False))
+        assert not dq1.popl().get(True)
         while dq1:
-            assert dq1.popL().get(False)
-        assert dq1.popR() == MB()
+            assert dq1.popl().get(False)
+        assert dq1.popr() == MB()
 
         def wrapMB(x: int) -> MB[int]:
             return MB(x)
@@ -367,30 +367,30 @@ class TestQueueTypes:
     def test_equality(self) -> None:
         dq1: DQ[object] = DQ(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
         dq2: DQ[object] = DQ(2, 3, 'Forty-Two')
-        dq2.pushL(1)
-        dq2.pushR((7, 11, 'foobar'))
+        dq2.pushl(1)
+        dq2.pushr((7, 11, 'foobar'))
         assert dq1 == dq2
 
-        tup = dq2.popR().get(tuple(range(42)))
+        tup = dq2.popr().get(tuple(range(42)))
         assert dq1 != dq2
 
-        dq2.pushR((42, 'foofoo'))
+        dq2.pushr((42, 'foofoo'))
         assert dq1 != dq2
 
-        dq1.popR()
-        dq1.pushR((42, 'foofoo'))
-        dq1.pushR(tup)
-        dq2.pushR(tup)
+        dq1.popr()
+        dq1.pushr((42, 'foofoo'))
+        dq1.pushr(tup)
+        dq2.pushr(tup)
         assert dq1 == dq2
 
-        holdA = dq1.popL().get(0)
-        holdB = dq1.popL().get(0)
-        holdC = dq1.popR().get(0)
-        dq1.pushL(holdB)
-        dq1.pushR(holdC)
-        dq1.pushL(holdA)
-        dq1.pushL(200)
-        dq2.pushL(200)
+        holdA = dq1.popl().get(0)
+        holdB = dq1.popl().get(0)
+        holdC = dq1.popr().get(0)
+        dq1.pushl(holdB)
+        dq1.pushr(holdC)
+        dq1.pushl(holdA)
+        dq1.pushl(200)
+        dq2.pushl(200)
         assert dq1 == dq2
 
         tup1 = 7, 11, 'foobar'
