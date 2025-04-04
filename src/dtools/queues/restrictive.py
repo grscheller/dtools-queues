@@ -30,12 +30,16 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterator, Sequence
-from typing import Never, overload, TypeVar
+from collections.abc import Callable, Iterable, Iterator, Sequence
+from typing import Never, overload, TypeVar, reveal_type
 from dtools.circular_array.ca import ca, CA
 from dtools.fp.err_handling import MB
 
-__all__ = ['DoubleQueue', 'FIFOQueue', 'LIFOQueue', 'QueueBase']
+__all__ = [
+    'DoubleQueue',
+    'FIFOQueue',
+    'LIFOQueue',
+]
 
 D = TypeVar('D')  # Not needed for mypy, hint for pdoc.
 L = TypeVar('L')
@@ -43,20 +47,22 @@ R = TypeVar('R')
 U = TypeVar('U')
 
 
-class QueueBase[D](Sequence[D]):
-    """Base class for circular area based queues.
+class FIFOQueue[D]:
+    """FIFO Queue
 
-    - implemented with a dtools.circular-array in a "has-a" relationship
-    - order of initial data retained
-    - slicing deliberately implemented
-      - actually ignored, underlying circular-array is sliceable
+    - stateful First-In-First-Out (FIFO) data structure
+    - initial data pushed on in natural FIFO order
 
     """
 
     __slots__ = ('_ca',)
 
-    def __init__(self, *ds: D) -> None:
-        self._ca = ca(ds)
+    def __init__(self, *dss: Iterable[D]) -> None:
+        if (size := len(dss)) <= 1:
+            self._ca = ca(dss[0]) if size > 0 else ca()
+        else:
+            msg = f'FIFOQueue expects at most 1 argument, got {size}'
+            raise TypeError(msg)
 
     def __bool__(self) -> bool:
         return len(self._ca) > 0
@@ -65,7 +71,7 @@ class QueueBase[D](Sequence[D]):
         return len(self._ca)
 
     def __eq__(self, other: object, /) -> bool:
-        if not isinstance(other, type(self)):
+        if not isinstance(other, FIFOQueue):
             return False
         return self._ca == other._ca
 
@@ -80,17 +86,6 @@ class QueueBase[D](Sequence[D]):
             raise NotImplementedError(msg)
         return self._ca[idx]
 
-
-class FIFOQueue[D](QueueBase[D]):
-    """FIFO Queue
-
-    - stateful First-In-First-Out (FIFO) data structure
-    - initial data pushed on in natural FIFO order
-
-    """
-
-    __slots__ = ()
-
     def __iter__(self) -> Iterator[D]:
         return iter(list(self._ca))
 
@@ -104,7 +99,7 @@ class FIFOQueue[D](QueueBase[D]):
 
     def copy(self) -> FIFOQueue[D]:
         """Return a shallow copy of the `FIFOQueue`."""
-        return FIFOQueue(*self._ca)
+        return FIFOQueue(self._ca)
 
     def push(self, *ds: D) -> None:
         """Push data onto `FIFOQueue`, does not return a value."""
@@ -168,10 +163,10 @@ class FIFOQueue[D](QueueBase[D]):
         - returns a new instance
 
         """
-        return FIFOQueue(*map(f, self._ca))
+        return FIFOQueue(map(f, self._ca))
 
 
-class LIFOQueue[D](QueueBase[D]):
+class LIFOQueue[D]:
     """LIFO Queue.
 
     - stateful Last-In-First-Out (LIFO) data structure
@@ -179,7 +174,32 @@ class LIFOQueue[D](QueueBase[D]):
 
     """
 
-    __slots__ = ()
+    __slots__ = ('_ca',)
+
+    def __init__(self, *ds: D) -> None:
+        self._ca = ca(ds)
+
+    def __bool__(self) -> bool:
+        return len(self._ca) > 0
+
+    def __len__(self) -> int:
+        return len(self._ca)
+
+    def __eq__(self, other: object, /) -> bool:
+        if not isinstance(other, LIFOQueue):
+            return False
+        return self._ca == other._ca
+
+    @overload
+    def __getitem__(self, idx: int, /) -> D: ...
+    @overload
+    def __getitem__(self, idx: slice, /) -> Sequence[D]: ...
+
+    def __getitem__(self, idx: int | slice, /) -> D | Sequence[D] | Never:
+        if isinstance(idx, slice):
+            msg = 'dtool.restictive queues are not slicable by design'
+            raise NotImplementedError(msg)
+        return self._ca[idx]
 
     def __iter__(self) -> Iterator[D]:
         return reversed(list(self._ca))
@@ -249,7 +269,7 @@ class LIFOQueue[D](QueueBase[D]):
         return LIFOQueue(*reversed(CA(*map(f, reversed(self._ca)))))
 
 
-class DoubleQueue[D](QueueBase[D]):
+class DoubleQueue[D]:
     """Double Ended Queue
 
     - stateful Double-Ended (DEQueue) data structure
@@ -257,7 +277,32 @@ class DoubleQueue[D](QueueBase[D]):
 
     """
 
-    __slots__ = ()
+    __slots__ = ('_ca',)
+
+    def __init__(self, *ds: D) -> None:
+        self._ca = ca(ds)
+
+    def __bool__(self) -> bool:
+        return len(self._ca) > 0
+
+    def __len__(self) -> int:
+        return len(self._ca)
+
+    def __eq__(self, other: object, /) -> bool:
+        if not isinstance(other, DoubleQueue):
+            return False
+        return self._ca == other._ca
+
+    @overload
+    def __getitem__(self, idx: int, /) -> D: ...
+    @overload
+    def __getitem__(self, idx: slice, /) -> Sequence[D]: ...
+
+    def __getitem__(self, idx: int | slice, /) -> D | Sequence[D] | Never:
+        if isinstance(idx, slice):
+            msg = 'dtool.restictive queues are not slicable by design'
+            raise NotImplementedError(msg)
+        return self._ca[idx]
 
     def __iter__(self) -> Iterator[D]:
         return iter(list(self._ca))
@@ -375,3 +420,18 @@ class DoubleQueue[D](QueueBase[D]):
 
         """
         return DoubleQueue(*map(f, self._ca))
+
+
+def fifoqueue(*ds: D) -> FIFOQueue[D]:
+    """Create a FIFOQueue from an iterable."""
+    return FIFOQueue(ds)
+
+
+# def lifoqueue(ds: Iterable[D]) -> LIFOQueue[D]:
+#     """Create a LIFOQueue from an iterable."""
+#     return LIFOQueue(*ds)
+# 
+# 
+# def doublequeue(*ds: D) -> DoubleQueue[D]:
+#     """Create a DoubleQueue from an iterable."""
+#     return DoubleQueue(*ds)

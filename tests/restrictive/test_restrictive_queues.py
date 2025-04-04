@@ -18,6 +18,7 @@ from dtools.circular_array.ca import CA
 from dtools.tuples.ftuple import FTuple as FT
 from dtools.queues.restrictive import DoubleQueue as DQ
 from dtools.queues.restrictive import FIFOQueue as FQ
+from dtools.queues.restrictive import fifoqueue as fq
 from dtools.queues.restrictive import LIFOQueue as LQ
 from dtools.fp.err_handling import MB
 
@@ -92,37 +93,37 @@ class TestQueueTypes:
         dq2.popl()
         assert len(dq2) == 0
 
-        fq: FQ[MB[int|str]] = FQ()
-        fq.push(MB(42))
-        fq.push(MB('bar'))
-        assert fq.pop().get() == 42
-        assert fq.pop().get('foo') == 'bar'  # correct execution but
-        assert fq.pop().get('foo') == 'foo'  # type hints are off
-        assert len(fq) == 0
-        fq.push(MB(0))
-        assert fq.pop() == MB(0)
-        assert not fq
-        assert fq.pop() == MB()
-        assert len(fq) == 0
+        fq1: FQ[MB[int|str]] = FQ()
+        fq1.push(MB(42))
+        fq1.push(MB('bar'))
+        assert fq1.pop().get() == 42
+        assert fq1.pop().get('foo') == 'bar'  # correct execution but
+        assert fq1.pop().get('foo') == 'foo'  # type hints are off
+        assert len(fq1) == 0
+        fq1.push(MB(0))
+        assert fq1.pop() == MB(0)
+        assert not fq1
+        assert fq1.pop() == MB()
+        assert len(fq1) == 0
         val: MB[int|str] = MB('Bob' + 'by')
-        fq.push(val)
-        assert fq
-        assert val.get('Robert') == fq.pop().get('Bob') == 'Bobby'
-        assert len(fq) == 0
-        assert fq.pop().get('Robert') == 'Robert'
-        fq.push(MB('first'))
-        fq.push(MB('second'))
-        fq.push(MB('last'))
-        poppedMB = fq.pop()
+        fq1.push(val)
+        assert fq1
+        assert val.get('Robert') == fq1.pop().get('Bob') == 'Bobby'
+        assert len(fq1) == 0
+        assert fq1.pop().get('Robert') == 'Robert'
+        fq1.push(MB('first'))
+        fq1.push(MB('second'))
+        fq1.push(MB('last'))
+        poppedMB = fq1.pop()
         if poppedMB == MB():
             assert False
         else:
             assert poppedMB.get('impossible') == 'first'
-        assert fq.pop().get(MB()) == 'second'
-        assert fq
-        fq.pop()
-        assert len(fq) == 0
-        assert not fq
+        assert fq1.pop().get(MB()) == 'second'
+        assert fq1
+        fq1.pop()
+        assert len(fq1) == 0
+        assert not fq1
 
         lq: LQ[MB[int|str]] = LQ()
         lq.push(MB(42))
@@ -167,8 +168,8 @@ class TestQueueTypes:
 
         barNone: tuple[int|None, ...] = (None, 1, 2, 3, None)
         bar42 = (42, 1, 2, 3, 42)
-        fq3: FQ[object] = FQ(*barNone)
-        fq4: FQ[object] = FQ(*map(is42, bar42))
+        fq3: FQ[object] = FQ(barNone)
+        fq4: FQ[object] = FQ(map(is42, bar42))
         assert fq3 == fq4
 
         lq1: LQ[Optional[int]] = LQ()
@@ -326,7 +327,7 @@ class TestQueueTypes:
             return MB(x)
 
         data_ca = CA(1, 2, 3, 4, 0, 6, 7, 8, 9)
-        fq: FQ[MB[int]] = FQ(*data_ca.map(wrapMB))
+        fq: FQ[MB[int]] = FQ(data_ca.map(wrapMB))
         assert data_ca[0] == 1
         assert data_ca[-1] == 9
         ii = 0
@@ -339,7 +340,7 @@ class TestQueueTypes:
         for _ in fq0:
             assert False
 
-        fq00: FQ[int] = FQ(*())
+        fq00: FQ[int] = FQ(())
         for _ in fq00:
             assert False
         assert not fq00
@@ -396,8 +397,8 @@ class TestQueueTypes:
         tup1 = 7, 11, 'foobar'
         tup2 = 42, 'foofoo'
 
-        fq1 = FQ(1, 2, 3, 'Forty-Two', tup1)
-        fq2 = FQ(2, 3, 'Forty-Two')
+        fq1 = fq(1, 2, 3, 'Forty-Two', tup1)
+        fq2 = fq(2, 3, 'Forty-Two')
         fq2.push((7, 11, 'foobar'))
         popped = fq1.pop()
         assert popped == MB(1)
@@ -464,23 +465,23 @@ class TestQueueTypes:
         assert dq0m.map(f2) == DQ()
         assert dq1m.map(f2) == DQ('24', '3', '8', '0', '1763')
 
-        fq0: FQ[int] = FQ()
-        fq1: FQ[int] = FQ(5, 42, 3, 1, 2)
+        fq0: FQ[int] = fq()
+        fq1: FQ[int] = fq(5, 42, 3, 1, 2)
         q0m = fq0.map(f1)
         q1m = fq1.map(f1)
-        assert q0m == FQ()
-        assert q1m == FQ(24, 1763, 8, 0, 3)
+        assert q0m == fq()
+        assert q1m == fq(24, 1763, 8, 0, 3)
 
         fq0.push(8, 9, 10)
         assert fq0.pop().get(-1) == 8
         assert fq0.pop() == MB(9)
         fq2 = fq0.map(f1)
-        assert fq2 == FQ(99)
-        assert fq2 == FQ(99)
+        assert fq2 == fq(99)
+        assert fq2 == fq(99)
 
         fq2.push(100)
         fq3 = fq2.map(f2)
-        assert fq3 == FQ('99', '100')
+        assert fq3 == FQ(['99', '100'])
 
         lq0: LQ[int] = LQ()
         lq1 = LQ(5, 42, 3, 1, 2)
