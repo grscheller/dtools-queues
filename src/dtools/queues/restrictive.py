@@ -31,20 +31,23 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Iterator, Sequence
-from typing import Never, overload, TypeVar, reveal_type
-from dtools.circular_array.ca import ca, CA
+from typing import Never, overload#, TypeVar
+from dtools.circular_array.ca import CA
 from dtools.fp.err_handling import MB
 
 __all__ = [
     'DoubleQueue',
     'FIFOQueue',
     'LIFOQueue',
+    'double_queue',
+    'fifo_queue',
+    'lifo_queue'
 ]
 
-D = TypeVar('D')  # Not needed for mypy, hint for pdoc.
-L = TypeVar('L')
-R = TypeVar('R')
-U = TypeVar('U')
+# D = TypeVar('D')  # Hint for pdoc,
+# L = TypeVar('L')  # not needed for mypy or Python.
+# R = TypeVar('R')  # Uncomment these lines and
+# U = TypeVar('U')  # the ", TypeVar" above
 
 
 class FIFOQueue[D]:
@@ -59,9 +62,9 @@ class FIFOQueue[D]:
 
     def __init__(self, *dss: Iterable[D]) -> None:
         if (size := len(dss)) <= 1:
-            self._ca = ca(dss[0]) if size > 0 else ca()
+            self._ca = CA(dss[0]) if size > 0 else CA()
         else:
-            msg = f'FIFOQueue expects at most 1 argument, got {size}'
+            msg = f'FIFOQueue expects at most 1 iterable argument, got {size}'
             raise TypeError(msg)
 
     def __bool__(self) -> bool:
@@ -176,8 +179,12 @@ class LIFOQueue[D]:
 
     __slots__ = ('_ca',)
 
-    def __init__(self, *ds: D) -> None:
-        self._ca = ca(ds)
+    def __init__(self, *dss: Iterable[D]) -> None:
+        if (size := len(dss)) <= 1:
+            self._ca = CA(dss[0]) if size > 0 else CA()
+        else:
+            msg = f'LIFOQueue expects at most 1 iterable argument, got {size}'
+            raise TypeError(msg)
 
     def __bool__(self) -> bool:
         return len(self._ca) > 0
@@ -214,7 +221,7 @@ class LIFOQueue[D]:
 
     def copy(self) -> LIFOQueue[D]:
         """Return a shallow copy of the `LIFOQueue`."""
-        return LIFOQueue(*reversed(self._ca))
+        return LIFOQueue(reversed(self._ca))
 
     def push(self, *ds: D) -> None:
         """Push data onto `LIFOQueue`, does not return a value."""
@@ -266,7 +273,7 @@ class LIFOQueue[D]:
         - returns a new instance
 
         """
-        return LIFOQueue(*reversed(CA(*map(f, reversed(self._ca)))))
+        return LIFOQueue(reversed(CA(map(f, reversed(self._ca)))))
 
 
 class DoubleQueue[D]:
@@ -279,8 +286,12 @@ class DoubleQueue[D]:
 
     __slots__ = ('_ca',)
 
-    def __init__(self, *ds: D) -> None:
-        self._ca = ca(ds)
+    def __init__(self, *dss: Iterable[D]) -> None:
+        if (size := len(dss)) <= 1:
+            self._ca = CA(dss[0]) if size > 0 else CA()
+        else:
+            msg = f'DoubleQueue expects at most 1 iterable argument, got {size}'
+            raise TypeError(msg)
 
     def __bool__(self) -> bool:
         return len(self._ca) > 0
@@ -320,7 +331,7 @@ class DoubleQueue[D]:
 
     def copy(self) -> DoubleQueue[D]:
         """Return a shallow copy of the `DoubleQueue`."""
-        return DoubleQueue(*self._ca)
+        return DoubleQueue(self._ca)
 
     def pushl(self, *ds: D) -> None:
         """Push data onto left side (front) of `DoubleQueue`.
@@ -419,19 +430,19 @@ class DoubleQueue[D]:
         - returns a new instance
 
         """
-        return DoubleQueue(*map(f, self._ca))
+        return DoubleQueue(map(f, self._ca))
 
 
-def fifoqueue(*ds: D) -> FIFOQueue[D]:
+def fifo_queue[D](*ds: D) -> FIFOQueue[D]:
     """Create a FIFOQueue from an iterable."""
     return FIFOQueue(ds)
 
 
-# def lifoqueue(ds: Iterable[D]) -> LIFOQueue[D]:
-#     """Create a LIFOQueue from an iterable."""
-#     return LIFOQueue(*ds)
-# 
-# 
-# def doublequeue(*ds: D) -> DoubleQueue[D]:
-#     """Create a DoubleQueue from an iterable."""
-#     return DoubleQueue(*ds)
+def lifo_queue[D](*ds: D) -> LIFOQueue[D]:
+    """Create a LIFOQueue from an iterable."""
+    return LIFOQueue(ds)
+
+
+def double_queue[D](*ds: D) -> DoubleQueue[D]:
+    """Create a DoubleQueue from an iterable."""
+    return DoubleQueue(ds)

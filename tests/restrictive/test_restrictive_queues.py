@@ -14,12 +14,14 @@
 
 from __future__ import annotations
 from typing import Optional
-from dtools.circular_array.ca import CA
+from dtools.circular_array.ca import ca
 from dtools.tuples.ftuple import FTuple as FT
 from dtools.queues.restrictive import DoubleQueue as DQ
+from dtools.queues.restrictive import double_queue as dq
 from dtools.queues.restrictive import FIFOQueue as FQ
-from dtools.queues.restrictive import fifoqueue as fq
+from dtools.queues.restrictive import fifo_queue as fq
 from dtools.queues.restrictive import LIFOQueue as LQ
+from dtools.queues.restrictive import lifo_queue as lq
 from dtools.fp.err_handling import MB
 
 class TestQueueTypes:
@@ -181,8 +183,8 @@ class TestQueueTypes:
 
         barNone = (None, 1, 2, None, 3)
         bar42 = (42, 1, 2, 42, 3)
-        lq3: LQ[Optional[int]] = LQ(*barNone)
-        lq4: LQ[Optional[int]] = LQ(*map(is42, bar42))
+        lq3: LQ[Optional[int]] = LQ(barNone)
+        lq4: LQ[Optional[int]] = LQ(map(is42, bar42))
         assert lq3 == lq4
 
 
@@ -198,8 +200,8 @@ class TestQueueTypes:
 
         barNone = (1, 2, None, 3, None, 4)
         bar42 = (1, 2, 42, 3, 42, 4)
-        dq3 = DQ[Optional[int]](*barNone)
-        dq4 = DQ[Optional[int]](*map(is42, bar42))
+        dq3 = DQ[Optional[int]](barNone)
+        dq4 = DQ[Optional[int]](map(is42, bar42))
         assert dq3 == dq4
 
     def test_bool_len_peak(self) -> None:
@@ -299,7 +301,7 @@ class TestQueueTypes:
     def test_iterators(self) -> None:
         data_d = FT(1, 2, 3, 4, 5)
         data_mb = data_d.map(lambda d: MB(d))
-        dq: DQ[MB[int]] = DQ(*data_mb)
+        dq: DQ[MB[int]] = DQ(data_mb)
         ii = 0
         for item in dq:
             assert data_mb[ii] == item
@@ -311,7 +313,7 @@ class TestQueueTypes:
             assert False
 
         data_bool_mb: tuple[MB[bool], ...] = ()
-        dq1: DQ[MB[bool]] = DQ(*data_bool_mb)
+        dq1: DQ[MB[bool]] = DQ(data_bool_mb)
         for _ in dq1:
             assert False
         dq1.pushr(MB(True))
@@ -326,7 +328,7 @@ class TestQueueTypes:
         def wrapMB(x: int) -> MB[int]:
             return MB(x)
 
-        data_ca = CA(1, 2, 3, 4, 0, 6, 7, 8, 9)
+        data_ca = ca(1, 2, 3, 4, 0, 6, 7, 8, 9)
         fq: FQ[MB[int]] = FQ(data_ca.map(wrapMB))
         assert data_ca[0] == 1
         assert data_ca[-1] == 9
@@ -346,7 +348,7 @@ class TestQueueTypes:
         assert not fq00
 
         data_list: list[int] = list(range(1,1001))
-        lq: LQ[int] = LQ(*data_list)
+        lq: LQ[int] = LQ(data_list)
         ii = len(data_list) - 1
         for item_int in lq:
             assert data_list[ii] == item_int
@@ -366,8 +368,8 @@ class TestQueueTypes:
         assert lq00.pop() == MB()
 
     def test_equality(self) -> None:
-        dq1: DQ[object] = DQ(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
-        dq2: DQ[object] = DQ(2, 3, 'Forty-Two')
+        dq1: DQ[object] = dq(1, 2, 3, 'Forty-Two', (7, 11, 'foobar'))
+        dq2: DQ[object] = dq(2, 3, 'Forty-Two')
         dq2.pushl(1)
         dq2.pushr((7, 11, 'foobar'))
         assert dq1 == dq2
@@ -422,8 +424,8 @@ class TestQueueTypes:
         l1 = ['foofoo', 7, 11]
         l2 = ['foofoo', 42]
 
-        lq1: LQ[object] = LQ(3, 'Forty-Two', l1, 1)
-        lq2: LQ[object] = LQ(3, 'Forty-Two', 2)
+        lq1: LQ[object] = lq(3, 'Forty-Two', l1, 1)
+        lq2: LQ[object] = lq(3, 'Forty-Two', 2)
         assert lq1.pop() == MB(1)
         peak = lq1.peak().get([1,2,3,4,5])
         assert peak == l1
@@ -438,8 +440,8 @@ class TestQueueTypes:
         lq2.push(42)
         assert lq1 != lq2
 
-        lq3: LQ[str] = LQ(*map(lambda i: str(i), range(43)))
-        lq4: LQ[int] = LQ(*range(-1, 39), 41, 40, 39)
+        lq3: LQ[str] = LQ(map(lambda i: str(i), range(43)))
+        lq4: LQ[int] = lq(*range(-1, 39), 41, 40, 39)
 
         lq3.push(lq3.pop().get(), lq3.pop().get(), lq3.pop().get())
         lq5 = lq4.map(lambda i: str(i+1))
@@ -452,18 +454,18 @@ class TestQueueTypes:
         def f2(ii: int) -> str:
             return str(ii)
 
-        dq = DQ(5, 2, 3, 1, 42)
-        dq0: DQ[int] = DQ()
-        dq1 = dq.copy()
-        assert dq1 == dq
-        assert dq1 is not dq
+        dq0: DQ[int] = dq()
+        dq1 = dq(5, 2, 3, 1, 42)
+        dq2 = dq1.copy()
+        assert dq2 == dq1
+        assert dq2 is not dq1
         dq0m = dq0.map(f1)
-        dq1m = dq1.map(f1)
-        assert dq == DQ(5, 2, 3, 1, 42)
-        assert dq0m == DQ()
-        assert dq1m == DQ(24, 3, 8, 0, 1763)
+        dq1m = dq2.map(f1)
+        assert dq1 == dq(5, 2, 3, 1, 42)
+        assert dq0m == dq()
+        assert dq1m == dq(24, 3, 8, 0, 1763)
         assert dq0m.map(f2) == DQ()
-        assert dq1m.map(f2) == DQ('24', '3', '8', '0', '1763')
+        assert dq1m.map(f2) == dq('24', '3', '8', '0', '1763')
 
         fq0: FQ[int] = fq()
         fq1: FQ[int] = fq(5, 42, 3, 1, 2)
@@ -484,18 +486,18 @@ class TestQueueTypes:
         assert fq3 == FQ(['99', '100'])
 
         lq0: LQ[int] = LQ()
-        lq1 = LQ(5, 42, 3, 1, 2)
+        lq1 = lq(5, 42, 3, 1, 2)
         lq0m = lq0.map(f1)
         lq1m = lq1.map(f1)
         assert lq0m == LQ()
-        assert lq1m == LQ(24, 1763, 8, 0, 3)
+        assert lq1m == lq(24, 1763, 8, 0, 3)
 
         lq0.push(8, 9, 10)
         assert lq0.pop() == MB(10)
         assert lq0.pop() == MB(9)
         lq2 = lq0.map(f1)
-        assert lq2 == LQ(63)
+        assert lq2 == lq(63)
 
         lq2.push(42)
         lq3 = lq2.map(f2)
-        assert lq3 == LQ('63', '42')
+        assert lq3 == lq('63', '42')
