@@ -65,7 +65,7 @@ class FIFOQueue[D]:
             self._ca = CA(dss[0]) if size > 0 else CA()
         else:
             msg = f'FIFOQueue expects at most 1 iterable argument, got {size}'
-            raise TypeError(msg)
+            raise ValueError(msg)
 
     def __bool__(self) -> bool:
         return len(self._ca) > 0
