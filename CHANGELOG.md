@@ -1,6 +1,6 @@
 # CHANGELOG
 
-PyPI grscheller.datastructures project.
+PyPI dtools.queues project.
 
 - first digit - major event, epoch, or paradigm shift
 - second digit - breaking API changes, major changes
@@ -8,6 +8,14 @@ PyPI grscheller.datastructures project.
 - forth digit - commit count changes/regressions (dev environment only)
 
 ## Releases and other important milestones
+
+### Version 0.27.0 - PyPI release date 2025-04-07
+
+- first PyPI release as dtools.tuples
+  - split dtools.datastructures into
+    - dtools.queues
+    - dtools.tuples
+- typing improvements
 
 ### Version 0.25.1 - PyPI release date 2025-01-16
 
@@ -239,8 +247,6 @@ PyPI grscheller.datastructures project.
 
 ### Version 0.6.9.0 - PyPI release date: 2023-10-09
 
-- deprecated Stack head() method
-  - replaced with peak() method
 - renamed core module to iterlib module
   - library just contained functions for manipulating iterators
   - TODO: use mergeIters as a guide for an iterator "zip" function
@@ -341,10 +347,6 @@ PyPI grscheller.datastructures project.
 
 - First version to be installed from GitHub with pip
 - $ pip install git+https://github.com/grscheller/datastructures@v0.2.0.2
-
-### Version 0.2.0.1 - commit date: 2023-08-29
-
-- First failed attempt to make package installable from GitHub with pip
 
 ### Version 0.2.0.0 - commit date: 2023-08-29
 
