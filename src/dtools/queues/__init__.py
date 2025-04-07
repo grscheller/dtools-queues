@@ -17,20 +17,27 @@
 
 #### Modules
 
-- *module* dtools.queues.restrictive
-  - mutable data structures geared to specific algorithmic use cases
-    - *class* FIFOQueue: First In First Out Queue
-    - *class* LIFOQueue: Last In First Out Queue
-    - *class* DoubleQueue: Double-ended Queue
-- module dtools.queues.splitends
-  - mutable LIFO queues (stacks)
-    - which allow for data sharing between different instances
-    - multiple instances can form bush like data structures
-      - like follicles of hair with split ends
+##### module dtools.queues.restrictive
+
+- mutable data structures geared to specific algorithmic use cases
+  - *class* dtools.queues.restrictive.FIFOQueue: First In First Out Queue
+  - *class* dtools.queues.restrictive.LIFOQueue: Last In First Out Queue
+  - *class* dtools.queues.restrictive.DoubleQueue: Double-ended Queue
+
+---
+
+##### *module* dtools.queues.splitends
+
+- *class* dtools.splitends.se.SE: Mutable LIFO queues (stacks)
+  - which allow for data sharing between different instances
+  - each splitend sees itself as a singularly linked list
+    - from the "end" of the hair to its "root"
+  - multiple instances can form bush like data structures
+    - like follicles of hair with split ends
 
 """
 
-__version__ = '0.26.0.4'
+__version__ = '0.27.0.0'
 __author__ = 'Geoffrey R. Scheller'
 __copyright__ = 'Copyright (c) 2023-2025 Geoffrey R. Scheller'
 __license__ = 'Apache License 2.0'

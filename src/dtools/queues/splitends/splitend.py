@@ -27,14 +27,14 @@ subpackage.
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Hashable, Iterator
 from typing import Never, TypeVar
 from dtools.fp.err_handling import MB
 from .splitend_node import SENode as Node
 
 __all__ = ['SplitEnd']
 
-D = TypeVar('D')  # Not needed for mypy, hint for pdoc.
+D = TypeVar('D', bound=Hashable)
 T = TypeVar('T')
 
 
@@ -50,14 +50,14 @@ class SplitEnd[D]:
     - each SplitEnd sees itself as a singularly linked list
     - bush-like datastructures can be formed using multiple SplitEnds
     - len() returns the number of elements on the SplitEnd stack
-    - in boolean context, return true if split end is not rootless (empty)
+    - in boolean context, return true if split end is not the "root"
 
     """
 
     __slots__ = '_count', '_top', '_root'
 
-    def __init__(self, root: D, *ds: D) -> None:
-        node = Node(root, MB[Node[D]]())
+    def __init__(self, root_data: D, *ds: D) -> None:
+        node = Node(root_data, MB[Node[D]]())
         self._root = MB(node)
         self._top, self._count = self._root, 1
         for d in ds:
@@ -89,13 +89,15 @@ class SplitEnd[D]:
 
         if self._count != other._count:
             return False
+        if self._root != other._root:
+            return False
 
         left = self._top.get()
         right = other._top.get()
         for _ in range(self._count):
             if left is right:
                 return True
-            if not left.data_eq(right):
+            if left.peak() != right.peak():
                 return False
             if left:
                 left = left._prev.get()
@@ -121,7 +123,7 @@ class SplitEnd[D]:
 
     def peak(self) -> D:
         """Return the data at the top of the SplitEnd, doesn't consume it."""
-        return self._top.get().get_data()
+        return self._top.get().peak()
 
     def copy(self) -> SplitEnd[D]:
         """Return a copy of the SplitEnd.
@@ -130,7 +132,7 @@ class SplitEnd[D]:
         - returns a new instance with same data, including the root
 
         """
-        se: SplitEnd[D] = SplitEnd(self._root.get().get_data())
+        se: SplitEnd[D] = SplitEnd(self._root.get().peak())
         se._count, se._top, se._root = self._count, self._top, self._root
         return se
 

@@ -15,7 +15,6 @@
 from __future__ import annotations
 from typing import Optional
 from dtools.circular_array.ca import ca
-from dtools.tuples.ftuple import FTuple as FT
 from dtools.queues.restrictive import DoubleQueue as DQ
 from dtools.queues.restrictive import double_queue as dq
 from dtools.queues.restrictive import FIFOQueue as FQ
@@ -299,7 +298,7 @@ class TestQueueTypes:
         assert lq.pop() == MB()
 
     def test_iterators(self) -> None:
-        data_d = FT(1, 2, 3, 4, 5)
+        data_d = ca(1, 2, 3, 4, 5)
         data_mb = data_d.map(lambda d: MB(d))
         dq: DQ[MB[int]] = DQ(data_mb)
         ii = 0

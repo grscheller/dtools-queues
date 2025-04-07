@@ -20,8 +20,8 @@ data structures can safely share data nodes between themselves.
 
 #### Package splitend modules
 
-- module **dtools.queues.splitends.splitend**: SplitEnd queue
-- module **dtools.queues.splitends.splitend_node**: Data node for a SplitEnd queue
+- *module* dtools.queues.splitends.splitend: SplitEnd stack
+- *module* dtools.queues.splitends.splitend_node: Data node for a SplitEnd stack
 
 """
 

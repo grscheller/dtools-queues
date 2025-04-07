@@ -14,13 +14,12 @@
 
 from __future__ import annotations
 from dtools.queues.splitends.splitend import SplitEnd as SE
-from dtools.fp.err_handling import MB
 from dtools.fp.iterables import concat
 
 class Test_SplitEnds:
     def test_mutate_returns_none(self) -> None:
         ps = SE(41)
-        assert ps.push(1,2,3) is None  # type: ignore # thing I am testing for
+        assert ps.push(1,2,3) is None  # type: ignore[func-returns-value]
 
     def test_pushThenPop(self) -> None:
         s1 = SE(42)

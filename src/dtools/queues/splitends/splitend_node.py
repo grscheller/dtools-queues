@@ -21,18 +21,20 @@ other data structures which contain these data structures.
 """
 
 from __future__ import annotations
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Hashable, Iterator
 from typing import cast, TypeVar
 from dtools.fp.err_handling import MB
 
-D = TypeVar('D')  # Not needed for mypy, hint for pdoc.
+__all__ = ['SENode']
+
+D = TypeVar('D', bound=Hashable)
 T = TypeVar('T')
 
 
 class SENode[D]:
     """Data node for class SplitEnd
 
-    - data node for a top-to-root singularly linked list.
+    - hashable data node for a end-to-root singularly linked list.
     - designed so multiple splitends can safely share the same data
     - this type of node always
       - contain data
@@ -50,9 +52,9 @@ class SENode[D]:
 
     __slots__ = '_data', '_prev'
 
-    def __init__(self, data: D, prev: MB[SENode[D]]) -> None:
-        self._data = data
-        self._prev = prev
+    def __init__(self, data: D, prev: MB[SENode[D]] = MB()) -> None:
+        self._data: D = data
+        self._prev: MB[SENode[D]] = prev
 
     def __iter__(self) -> Iterator[D]:
         node = self
@@ -64,23 +66,27 @@ class SENode[D]:
     def __bool__(self) -> bool:
         return self._prev != MB()
 
-    def data_eq(self, other: SENode[D]) -> bool:
-        """Return true if other node has same or equal data."""
-        if self._data is other._data:
-            return True
-        if self._data == other._data:
-            return True
-        return False
-
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, type(self)):
             return False
 
-        return self._prev == other._prev and self.data_eq(other)
+        if self._prev != other._prev:
+            return False
+        if self._data == other._data:
+            return True
+        return False
 
-    def get_data(self) -> D:
+    def peak(self) -> D:
         """Return contained data"""
         return self._data
+
+    def pop2(self) -> tuple[D, MB[SENode[D]]]:
+        """Return the data at the *end* and potential *tail*."""
+        return self._data, self._prev
+
+    def push(self, data: D) -> SENode[D]:
+        """Push data onto the queue and return a new node containing the data."""
+        return SENode(data, MB(self))
 
     def fold[T](self, f: Callable[[T, D], T], init: T | None = None) -> T:
         """Reduce data across linked nodes.
@@ -102,11 +108,3 @@ class SENode[D]:
             node = node._prev.get()
         acc = f(acc, node._data)
         return acc
-
-    def pop2(self) -> tuple[D, MB[SENode[D]]]:
-        """Return the data in the *head* and potential *tail*."""
-        return self._data, self._prev
-
-    def push_data(self, data: D) -> SENode[D]:
-        """Push data onto the queue and return a new node containing the data."""
-        return SENode(data, MB(self))

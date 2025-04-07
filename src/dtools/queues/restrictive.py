@@ -31,7 +31,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Iterator, Sequence
-from typing import Never, overload#, TypeVar
+from typing import Never, overload, TypeVar
 from dtools.circular_array.ca import CA
 from dtools.fp.err_handling import MB
 
@@ -44,10 +44,10 @@ __all__ = [
     'lifo_queue'
 ]
 
-# D = TypeVar('D')  # Hint for pdoc,
-# L = TypeVar('L')  # not needed for mypy or Python.
-# R = TypeVar('R')  # Uncomment these lines and
-# U = TypeVar('U')  # the ", TypeVar" above
+D = TypeVar('D')  # Needed only for pdoc documentation generation. Makes
+L = TypeVar('L')  # linters unhappy when used on function and method signatures
+R = TypeVar('R')  # due to "redefined-outer-name" warnings. Function/method 
+U = TypeVar('U')  # signatures do not support variance and bounds constraints.
 
 
 class FIFOQueue[D]:
@@ -61,8 +61,8 @@ class FIFOQueue[D]:
     __slots__ = ('_ca',)
 
     def __init__(self, *dss: Iterable[D]) -> None:
-        if (size := len(dss)) <= 1:
-            self._ca = CA(dss[0]) if size > 0 else CA()
+        if (size := len(dss)) < 2:
+            self._ca = CA(dss[0]) if size == 1 else CA()
         else:
             msg = f'FIFOQueue expects at most 1 iterable argument, got {size}'
             raise ValueError(msg)
@@ -180,8 +180,8 @@ class LIFOQueue[D]:
     __slots__ = ('_ca',)
 
     def __init__(self, *dss: Iterable[D]) -> None:
-        if (size := len(dss)) <= 1:
-            self._ca = CA(dss[0]) if size > 0 else CA()
+        if (size := len(dss)) < 2:
+            self._ca = CA(dss[0]) if size == 1 else CA()
         else:
             msg = f'LIFOQueue expects at most 1 iterable argument, got {size}'
             raise TypeError(msg)
@@ -287,8 +287,8 @@ class DoubleQueue[D]:
     __slots__ = ('_ca',)
 
     def __init__(self, *dss: Iterable[D]) -> None:
-        if (size := len(dss)) <= 1:
-            self._ca = CA(dss[0]) if size > 0 else CA()
+        if (size := len(dss)) < 2:
+            self._ca = CA(dss[0]) if size == 1 else CA()
         else:
             msg = f'DoubleQueue expects at most 1 iterable argument, got {size}'
             raise TypeError(msg)
