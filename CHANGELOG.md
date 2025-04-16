@@ -11,7 +11,7 @@ PyPI dtools.queues project.
 
 ### Version 0.27.0 - PyPI release date 2025-04-07
 
-- first PyPI release as dtools.tuples
+- first PyPI release as dtools.queues
   - split dtools.datastructures into
     - dtools.queues
     - dtools.tuples
