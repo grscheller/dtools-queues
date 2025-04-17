@@ -17,15 +17,23 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
 ]
-dependencies = [
-    "dtools.circular-array >= 3.12.0, < 3.13",
-    "dtools.fp >= 1.6.0, < 1.7",
-]
 dynamic = ["version", "description"]
-keywords = ["fifo", "lifo", "stack", "queue", "SplitEnd"]
+keywords = [
+    "fifo",
+    "lifo",
+    "stack",
+    "queue",
+    "SplitEnd",
+]
+dependencies = [
+    "dtools.circular-array >= 3.12.1, < 3.13",
+    "dtools.fp >= 1.7.0, < 1.8",
+]
 
 [project.optional-dependencies]
-test = ["pytest >=8.3.5"]
+test = [
+    "pytest >=8.3.5",
+]
 
 [project.urls]
 Source = "https://github.com/grscheller/dtools-queues"
