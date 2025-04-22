@@ -15,16 +15,23 @@
 """
 ### Developer Tools - Queue based data structures
 
-#### *module* dtools.queues.restrictive
+These are modeled after Python builtins. The initializers take at most one
+iterable while factory functions stand in for Python syntax.
 
-- mutable data structures geared to specific algorithmic use cases
-  - *class* dtools.queues.restrictive.FIFOQueue: First In First Out Queue
-  - *class* dtools.queues.restrictive.LIFOQueue: Last In First Out Queue
-  - *class* dtools.queues.restrictive.DoubleQueue: Double-ended Queue
+#### *module* dtools.queues.types
+
+- Mutable data structures geared to specific algorithmic use cases
+  - *class* dtools.queues.types.FIFOQueue: First In First Out Queue
+  - *class* dtools.queues.types.LIFOQueue: Last In First Out Queue
+  - *class* dtools.queues.types.DoubleQueue: Double-ended Queue
+- Factory functions
+  - *function* dtools.queues.types.fifo_queue: Create FIFOQueue from values
+  - *function* dtools.queues.types.lifo_queue: Create LIFOQueue from values
+  - *function* dtools.queues.types.double_queue: Create DoubleQueue from values
 
 """
 
-__version__ = '0.27.1.0'
+__version__ = '0.27.2.0'
 __author__ = 'Geoffrey R. Scheller'
 __copyright__ = 'Copyright (c) 2023-2025 Geoffrey R. Scheller'
 __license__ = 'Apache License 2.0'

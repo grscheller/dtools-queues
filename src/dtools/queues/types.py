@@ -434,15 +434,15 @@ class DoubleQueue[D]:
 
 
 def fifo_queue[D](*ds: D) -> FIFOQueue[D]:
-    """Create a FIFOQueue from an iterable."""
+    """Create a FIFOQueue from the arguments."""
     return FIFOQueue(ds)
 
 
 def lifo_queue[D](*ds: D) -> LIFOQueue[D]:
-    """Create a LIFOQueue from an iterable."""
+    """Create a LIFOQueue from the arguments."""
     return LIFOQueue(ds)
 
 
 def double_queue[D](*ds: D) -> DoubleQueue[D]:
-    """Create a DoubleQueue from an iterable."""
+    """Create a DoubleQueue from the arguments."""
     return DoubleQueue(ds)
