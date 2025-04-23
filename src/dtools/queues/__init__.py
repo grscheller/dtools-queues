@@ -18,8 +18,6 @@
 These are modeled after Python builtins. The initializers take at most one
 iterable while factory functions stand in for Python syntax.
 
-#### *module* dtools.queues.types
-
 - Mutable data structures geared to specific algorithmic use cases
   - *class* dtools.queues.types.FIFOQueue: First In First Out Queue
   - *class* dtools.queues.types.LIFOQueue: Last In First Out Queue
@@ -31,7 +29,7 @@ iterable while factory functions stand in for Python syntax.
 
 """
 
-__version__ = '0.27.2.0'
+__version__ = '1.0.0'
 __author__ = 'Geoffrey R. Scheller'
 __copyright__ = 'Copyright (c) 2023-2025 Geoffrey R. Scheller'
 __license__ = 'Apache License 2.0'
