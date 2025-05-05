@@ -52,13 +52,13 @@ class TestQueueTypes:
         lq1.push(MB(4), MB(), MB(5))
         lq2 = lq1.map(lambda mb: mb.bind(lambda n: MB(2*n)))
         last = lq2.pop()
-        assert last.get(42) == 10
+        assert last.get(MB(42)) == MB(10)
         pop_out = lq2.pop()
-        assert pop_out == MB(MB()) == MB()
-        assert pop_out.get(42) == 42
-        assert lq2.peak() == MB(MB(8)) == MB(8)
-        assert lq2.peak().get(MB(3)) == 8
-        assert lq2.peak().get(3) == 8
+        assert pop_out == MB(MB())
+        assert pop_out.get(MB(42)) == MB()
+        assert lq2.peak() == MB(MB(8))
+        assert lq2.peak().get(MB(3)) == MB(8)
+        assert lq2.peak().get(MB(3)).get(42) == 8
 
     def test_push_then_pop(self) -> None:
         dq1 = DQ[int]()
@@ -97,94 +97,92 @@ class TestQueueTypes:
         fq1: FQ[MB[int|str]] = FQ()
         fq1.push(MB(42))
         fq1.push(MB('bar'))
-        assert fq1.pop().get() == 42
-        assert fq1.pop().get('foo') == 'bar'  # correct execution but
-        assert fq1.pop().get('foo') == 'foo'  # type hints are off
+        assert fq1.pop().get() == MB(42)
+        assert fq1.pop().get(MB('foo')).get(13) == 'bar'
+        assert fq1.pop().get(MB('foo')).get() == 'foo'
         assert len(fq1) == 0
         fq1.push(MB(0))
-        assert fq1.pop() == MB(0)
+        assert fq1.pop() == MB(MB(0))
         assert not fq1
         assert fq1.pop() == MB()
         assert len(fq1) == 0
         val: MB[int|str] = MB('Bob' + 'by')
         fq1.push(val)
         assert fq1
-        assert val.get('Robert') == fq1.pop().get('Bob') == 'Bobby'
+        assert val.get('Robert') == fq1.pop().get(MB('Bob')).get('Billy Bob') == 'Bobby'
         assert len(fq1) == 0
-        assert fq1.pop().get('Robert') == 'Robert'
+        assert fq1.pop().get(MB('Robert')) == MB('Robert')
         fq1.push(MB('first'))
-        fq1.push(MB('second'))
+        fq1.push(MB(2))
         fq1.push(MB('last'))
-        poppedMB = fq1.pop()
-        if poppedMB == MB():
+        fq1.map(lambda x: x.get('improbable'))
+        popped = fq1.pop()
+        if popped == 'impossible' or popped == 'improbable':
             assert False
         else:
-            assert poppedMB.get('impossible') == 'first'
-        assert fq1.pop().get(MB()) == 'second'
+            assert popped.get().get('impossible') == 'first'
+        assert fq1.pop().get(MB()).get(-1) == 2
         assert fq1
         fq1.pop()
         assert len(fq1) == 0
         assert not fq1
 
-        lq: LQ[MB[int|str]] = LQ()
-        lq.push(MB(42))
-        lq.push(MB('bar'))
-        assert lq.pop().get('foo') == 'bar'
-        assert lq.pop().get('foo') == 42
-        assert lq.pop().get('foo') == 'foo'
-        assert len(lq) == 0
-        lq.push(MB(0))
-        assert lq.pop() == MB(0)
-        assert not lq
-        assert lq.pop() == MB()
-        assert len(lq) == 0
-        val2: MB[int|str] = MB('Bob' + 'by')
-        lq.push(val)
-        assert lq
-        assert val2.get('Robert') == lq.pop().get('Bob') == 'Bobby'
-        assert len(lq) == 0
-        assert lq.pop().get('Robert') == 'Robert'
-        lq.push(MB('first'))
-        lq.push(MB('second'))
-        lq.push(MB('last'))
-        poppedMB = lq.pop()
-        if poppedMB == MB():
-            assert False
-        else:
-            assert poppedMB.get() == 'last'
-        assert lq.pop().get(MB('impossible')) == 'second'  # the type hits are not exposing
-        assert lq.pop().get('impossible') == 'first'       # the self flattening nature of MB
-        assert len(lq) == 0
-        assert not lq
+        lq10: LQ[int|float|str] = LQ()
+        lq10.push(42)
+        lq10.push('bar')
+        assert lq10.pop().get(100) == 'bar'
+        assert lq10.pop().get('foo') == 42
+        assert lq10.pop().get(24.0) == 24.0
+        assert len(lq10) == 0
+        lq10.push(0)
+        assert lq10.pop() == MB(0)
+        assert not lq10
+        assert lq10.pop() == MB()
+        assert len(lq10) == 0
+
+        val1: int|float|complex = 1.0 + 2.0j
+        val2: int|float|complex = 2
+        val3: int|float|complex = 3.0
+        fq11: FQ[int|float|complex] = FQ()
+        lq11: LQ[int|float|complex] = LQ()
+        lq11.push(val1)
+        lq11.push(val2)
+        lq11.push(val3)
+        fq11.push(val1)
+        fq11.push(val2)
+        fq11.push(val3)
+        assert lq11.pop().get() * lq11.pop().get() == 6.0
+        assert fq11.pop().get() * fq11.pop().get() == 2.0 + 4.0j
+
 
         def is42(ii: int) -> Optional[int]:
             return None if ii == 42 else ii
 
-        fq1: FQ[object] = FQ()
         fq2: FQ[object] = FQ()
-        fq1.push(None)
+        fq3: FQ[object] = FQ()
         fq2.push(None)
-        assert fq1 == fq2
-        assert len(fq1) == 1
+        fq3.push(None)
+        assert fq2 == fq3
+        assert len(fq2) == 1
 
         barNone: tuple[int|None, ...] = (None, 1, 2, 3, None)
         bar42 = (42, 1, 2, 3, 42)
-        fq3: FQ[object] = FQ(barNone)
-        fq4: FQ[object] = FQ(map(is42, bar42))
-        assert fq3 == fq4
+        fq4: FQ[object] = FQ(barNone)
+        fq5: FQ[object] = FQ(map(is42, bar42))
+        assert fq4 == fq5
 
-        lq1: LQ[Optional[int]] = LQ()
-        lq2: LQ[Optional[int]] = LQ()
-        lq1.push(None, 1, 2, None)
-        lq2.push(None, 1, 2, None)
-        assert lq1 == lq2
-        assert len(lq1) == 4
+        lqu1: LQ[Optional[int]] = LQ()
+        lqu2: LQ[Optional[int]] = LQ()
+        lqu1.push(None, 1, 2, None)
+        lqu2.push(None, 1, 2, None)
+        assert lqu1 == lqu2
+        assert len(lqu1) == 4
 
         barNone = (None, 1, 2, None, 3)
         bar42 = (42, 1, 2, 42, 3)
-        lq3: LQ[Optional[int]] = LQ(barNone)
-        lq4: LQ[Optional[int]] = LQ(map(is42, bar42))
-        assert lq3 == lq4
+        lqu3: LQ[Optional[int]] = LQ(barNone)
+        lqu4: LQ[Optional[int]] = LQ(map(is42, bar42))
+        assert lqu3 == lqu4
 
 
     def test_pushing_None(self) -> None:
@@ -311,14 +309,14 @@ class TestQueueTypes:
         for _ in dq0:
             assert False
 
-        data_bool_mb: tuple[MB[bool], ...] = ()
-        dq1: DQ[MB[bool]] = DQ(data_bool_mb)
+        data_bool_mb: tuple[bool, ...] = ()
+        dq1: DQ[bool] = DQ(data_bool_mb)
         for _ in dq1:
             assert False
-        dq1.pushr(MB(True))
-        dq1.pushl(MB(True))
-        dq1.pushr(MB(True))
-        dq1.pushl(MB(False))
+        dq1.pushr(True)
+        dq1.pushl(True)
+        dq1.pushr(True)
+        dq1.pushl(False)
         assert not dq1.popl().get(True)
         while dq1:
             assert dq1.popl().get(False)
