@@ -33,7 +33,7 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import Never, overload, TypeVar
 from dtools.circular_array.ca import CA
-from dtools.fp.err_handling import MB
+from dtools.fp.err_handling import MayBe as MB
 
 __all__ = [
     'DoubleQueue',
