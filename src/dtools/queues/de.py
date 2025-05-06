@@ -29,7 +29,7 @@ from typing import Never, overload, TypeVar
 from dtools.circular_array.ca import CA
 from dtools.fp.err_handling import MayBe as MB
 
-__all__ = ['DEQueue', 'double_queue']
+__all__ = ['DEQueue', 'de_queue']
 
 D = TypeVar('D')
 
@@ -39,6 +39,7 @@ class DEQueue[D]:
 
     - stateful Double-Ended (DEQueue) data structure
     - order of initial data retained
+      - as if pushed on from the right
 
     """
 
@@ -196,6 +197,6 @@ class DEQueue[D]:
         return DEQueue(map(f, self._ca))
 
 
-def double_queue[D](*ds: D) -> DEQueue[D]:
-    """Create a DEQueue from the arguments."""
+def de_queue[D](*ds: D) -> DEQueue[D]:
+    """Create a DEQueue from the function arguments."""
     return DEQueue(ds)

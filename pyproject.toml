@@ -5,6 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "dtools.queues"
 authors = [{ name = "Geoffrey R. Scheller", email = "geoffrey@scheller.com" }]
+version = "2.0.0"
 license = { file = "LICENSE" }
 readme = "README.md"
 requires-python = ">=3.12"
@@ -17,13 +18,12 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Typing :: Typed",
 ]
-dynamic = ["version", "description"]
+dynamic = ["description"]
 keywords = [
+    "queue",
     "fifo",
     "lifo",
-    "stack",
-    "queue",
-    "SplitEnd",
+    "dqueue",
 ]
 dependencies = [
     "dtools.circular-array >= 3.12.1, < 3.13",

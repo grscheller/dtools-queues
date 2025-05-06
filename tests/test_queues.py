@@ -15,12 +15,12 @@
 from __future__ import annotations
 from typing import Optional
 from dtools.circular_array.ca import ca
-from dtools.queues.types import DoubleQueue as DQ
-from dtools.queues.types import double_queue as dq
-from dtools.queues.types import FIFOQueue as FQ
-from dtools.queues.types import fifo_queue as fq
-from dtools.queues.types import LIFOQueue as LQ
-from dtools.queues.types import lifo_queue as lq
+from dtools.queues.de import DEQueue as DQ
+from dtools.queues.de import de_queue as dq
+from dtools.queues.fifo import FIFOQueue as FQ
+from dtools.queues.fifo import fifo_queue as fq
+from dtools.queues.lifo import LIFOQueue as LQ
+from dtools.queues.lifo import lifo_queue as lq
 from dtools.fp.err_handling import MayBe as MB
 
 class TestQueueTypes:

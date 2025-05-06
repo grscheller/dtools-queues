@@ -18,18 +18,21 @@
 These are modeled after Python builtins. The initializers take at most one
 iterable while factory functions stand in for Python syntax.
 
-- Mutable data structures geared to specific algorithmic use cases
-  - *class* dtools.queues.types.FIFOQueue: First In First Out Queue
-  - *class* dtools.queues.types.LIFOQueue: Last In First Out Queue
-  - *class* dtools.queues.types.DoubleQueue: Double-ended Queue
-- Factory functions
-  - *function* dtools.queues.types.fifo_queue: Create FIFOQueue from values
-  - *function* dtools.queues.types.lifo_queue: Create LIFOQueue from values
-  - *function* dtools.queues.types.double_queue: Create DoubleQueue from values
+- Queue types
+  - *class* dtools.queues.fifo.FIFOQueue: First-In-First-Out Queue
+  - *class* dtools.queues.lifo.LIFOQueue: Last-In-First-Out Queue
+  - *class* dtools.queues.de.DEQueue: Double-Ended Queue
+
+- Create queues from specific values
+  - *function* dtools.queues.fifo.fifo_queue: Create a FIFOQueue
+    - from function's arguments pushed on in natural FIFO order
+  - *function* dtools.queues.lifo.lifo_queue: Create a LIFOQueue
+    - from function's arguments pushed on in natural LIFO order
+  - *function* dtools.queues.de.de_queue: Create a DEQueue
+    - from function's arguments pushed on from the right
 
 """
 
-__version__ = '1.0.0'
 __author__ = 'Geoffrey R. Scheller'
 __copyright__ = 'Copyright (c) 2023-2025 Geoffrey R. Scheller'
 __license__ = 'Apache License 2.0'
