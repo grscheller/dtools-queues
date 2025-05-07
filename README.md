@@ -37,4 +37,4 @@ yourself.
 [1]: https://pypi.org/project/dtools.queues/
 [2]: https://github.com/grscheller/dtools-queues/
 [3]: https://grscheller.github.io/dtools-docs/queues/
-[4]: https://github.com/grscheller/dtools-docs
+[4]: https://github.com/grscheller/dtools-docs/blob/main/README.md
