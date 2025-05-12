@@ -21,7 +21,7 @@ from dtools.queues.fifo import FIFOQueue as FQ
 from dtools.queues.fifo import fifo_queue as fq
 from dtools.queues.lifo import LIFOQueue as LQ
 from dtools.queues.lifo import lifo_queue as lq
-from dtools.fp.err_handling import MayBe as MB
+from dtools.containers.maybe import MayBe as MB
 
 class TestQueueTypes:
     def test_mutate_map(self) -> None:

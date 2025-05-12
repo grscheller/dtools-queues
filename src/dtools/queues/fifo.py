@@ -27,7 +27,7 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import Never, overload, TypeVar
 from dtools.circular_array import CA
-from dtools.fp.err_handling import MayBe as MB
+from dtools.containers.maybe import MayBe as MB
 
 __all__ = ['FIFOQueue', 'fifo_queue']
 
