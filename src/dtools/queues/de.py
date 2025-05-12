@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import Never, overload, TypeVar
-from dtools.circular_array.ca import CA
+from dtools.circular_array import CA
 from dtools.fp.err_handling import MayBe as MB
 
 __all__ = ['DEQueue', 'de_queue']
@@ -170,7 +170,7 @@ class DEQueue[D]:
         if initial is None:
             if not self._ca:
                 return MB()
-        return MB(self._ca.foldl(f, initial=initial))
+        return MB(self._ca.foldl(f, initial))
 
     def foldr[R](self, f: Callable[[D, R], R], initial: R | None = None, /) -> MB[R]:
         """Reduce right to left with `f` using an optional initial value.
@@ -183,7 +183,7 @@ class DEQueue[D]:
         if initial is None:
             if not self._ca:
                 return MB()
-        return MB(self._ca.foldr(f, initial=initial))
+        return MB(self._ca.foldr(f, initial))
 
     def map[U](self, f: Callable[[D], U], /) -> DEQueue[U]:
         """`Map a function over `DEQueue`.

@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 from typing import Optional
-from dtools.circular_array.ca import ca
+from dtools.circular_array import ca
 from dtools.queues.de import DEQueue as DQ
 from dtools.queues.de import de_queue as dq
 from dtools.queues.fifo import FIFOQueue as FQ

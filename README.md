@@ -17,9 +17,9 @@ namespace project.
 Classic queue data structures:
 
 - *module* dtools.queues
-  - *class* fifo,FIFOQueue: First-In-First-Out Queue
-  - *class* lifo.LIFOQueue: Last-In-First-Out Queue
-  - *class* de.DEQueue: Double-Ended Queue
+  - *module* fifo: First-In-First-Out Queue - FIFOQueue
+  - *module* lifo: Last-In-First-Out Queue - LIFOQueue
+  - *module* de: Double-Ended Queue - DEQueue
 
 They allow iterators to leisurely iterate over inaccessible copies of
 their current state while the queues themselves are free to safely
@@ -36,5 +36,5 @@ yourself.
 
 [1]: https://pypi.org/project/dtools.queues/
 [2]: https://github.com/grscheller/dtools-queues/
-[3]: https://grscheller.github.io/dtools-namespac-projects/queues/
-[4]: https://github.com/grscheller/dtools-namespac-projects/blob/main/README.md
+[3]: https://grscheller.github.io/dtools-namespace-projects/queues/
+[4]: https://github.com/grscheller/dtools-namespace-projects/blob/main/README.md

@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import Never, overload, TypeVar
-from dtools.circular_array.ca import CA
+from dtools.circular_array import CA
 from dtools.fp.err_handling import MayBe as MB
 
 __all__ = ['LIFOQueue', 'lifo_queue']
@@ -129,7 +129,7 @@ class LIFOQueue[D]:
         if initial is None:
             if not self._ca:
                 return MB()
-        return MB(self._ca.foldr(f, initial=initial))
+        return MB(self._ca.foldr(f, initial))
 
     def map[U](self, f: Callable[[D], U], /) -> LIFOQueue[U]:
         """Map Over the `LIFOQueue`.
