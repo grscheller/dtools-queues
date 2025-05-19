@@ -498,3 +498,60 @@ class TestQueueTypes:
         lq2.push(42)
         lq3 = lq2.map(f2)
         assert lq3 == lq('63', '42')
+
+    def test_folding(self) -> None:
+        def f1(ii: int, jj: int) -> int:
+            return ii + jj
+
+        def f2l(ss: str, ii: int) -> str:
+            return ss + str(ii)
+
+        def f2r(ii: int, ss: str) -> str:
+            return ss + str(ii)
+
+        data = [1, 2, 3, 4, 5]
+        dq0: DQ[int] = DQ()
+        fq0: FQ[int] = FQ()
+        lq0: LQ[int] = LQ()
+        
+        dq1: DQ[int] = DQ()
+        fq1: FQ[int] = FQ()
+        lq1: LQ[int] = LQ()
+
+        dq1.pushr(*data[1:])
+        dq1.pushl(data[0])
+        fq1.push(*data)
+        lq1.push(*data)
+
+        assert dq1.foldl(f1).get(42) == 15
+        assert dq1.foldr(f1).get(42) == 15
+        assert fq1.fold(f1).get(42) == 15
+        assert lq1.fold(f1).get(42) == 15
+
+        assert dq1.foldl(f1, 10).get(-1) == 25
+        assert dq1.foldr(f1, 10).get(-1) == 25
+        assert fq1.fold(f1, 10).get(-1) == 25
+        assert lq1.fold(f1, 10).get(-1) == 25
+
+        assert dq1.foldl(f2l, '0').get('-1') == '012345'
+        assert dq1.foldr(f2r, '6').get('-1') == '654321' 
+        assert fq1.fold(f2l, '0').get('-1') == '012345'
+        assert lq1.fold(f2l, '6').get('-1') == '654321'
+
+        assert dq0.foldl(f1).get(42) == 42
+        assert dq0.foldr(f1).get(42) == 42
+        assert fq0.fold(f1).get(42) == 42
+        assert lq0.fold(f1).get(42) == 42
+
+        assert dq0.foldl(f1, 10).get(-1) == 10
+        assert dq0.foldr(f1, 10).get(-1) == 10
+        assert fq0.fold(f1, 10).get(-1) == 10
+        assert lq0.fold(f1, 10).get(-1) == 10
+
+        assert dq0.foldl(f2l, '0').get() == '0'
+        assert dq0.foldr(f2r, '6').get() == '6' 
+        assert fq0.fold(f2l, '0').get() == '0'
+        assert lq0.fold(f2l, '6').get() == '6'
+
+        cnt_up = fq1.fold(f2l, '0').map(lambda ss: ss + '6789')
+        assert cnt_up == MB('0123456789')
