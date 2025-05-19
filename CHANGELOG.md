@@ -1,13 +1,20 @@
 # CHANGELOG
 
-PyPI dtools.queues project.
+- Strict 3 digit semantic versioning (adopted 2025-05-19)
+  - MAJOR version for incompatible API changes
+  - MINOR version for backward compatible added functionality
+  - PATCH version for backward compatible bug fixes
 
-- first digit - major event, epoch, or paradigm shift
-- second digit - breaking API changes, major changes
-- third digit - bug fixes, API additions, breaking API in dev env
-- forth digit - commit count changes/regressions (dev environment only)
+## Releases and Important Milestones
 
-## Releases and other important milestones
+### Adapting strict Semantic from this point on - date 2025-05-19
+
+- [Semantic Versioning 2.0.0](https://semver.org/)
+- see top of file
+- previous versioning scheme used
+  - first digit - major event, epoch, or paradigm shift
+  - second digit - breaking API changes, major changes
+  - third digit - bug fixes, API additions
 
 ### Version 1.0.0 - PyPI release date 2025-04-22
 
