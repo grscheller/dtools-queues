@@ -44,6 +44,7 @@ class FIFOQueue[D]:
 
     __slots__ = ('_ca',)
 
+    T = TypeVar('T')
     U = TypeVar('U')
 
     def __init__(self, *dss: Iterable[D]) -> None:
@@ -129,13 +130,12 @@ class FIFOQueue[D]:
             return MB(self._ca[0])
         return MB()
 
-    def fold[L](self, f: Callable[[L, D], L], initial: L | None = None, /) -> MB[L]:
+    def fold[T](self, f: Callable[[T, D], T], initial: T | None = None, /) -> MB[T]:
         """Reduce with `f` with an optional initial value.
 
         - folds in natural FIFO Order (oldest to newest)
         - note that when an initial value is not given then `~L = ~D`
         - if iterable empty & no initial value given, return `MB()`
-        - traditional FP type order given for function `f`
 
         """
         if initial is None:

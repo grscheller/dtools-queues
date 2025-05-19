@@ -28,6 +28,7 @@ from collections.abc import Callable, Iterable, Iterator, Sequence
 from typing import Never, overload, TypeVar
 from dtools.circular_array import CA
 from dtools.containers.maybe import MayBe as MB
+from dtools.fp.function import swap
 
 __all__ = ['LIFOQueue', 'lifo_queue']
 
@@ -44,6 +45,7 @@ class LIFOQueue[D]:
 
     __slots__ = ('_ca',)
 
+    T = TypeVar('T')
     U = TypeVar('U')
 
     def __init__(self, *dss: Iterable[D]) -> None:
@@ -117,19 +119,18 @@ class LIFOQueue[D]:
             return MB(self._ca[-1])
         return MB()
 
-    def fold[R](self, f: Callable[[D, R], R], initial: R | None = None, /) -> MB[R]:
+    def fold[T](self, f: Callable[[T, D], T], initial: T | None = None, /) -> MB[T]:
         """Reduce with `f` with an optional initial value.
 
         - folds in natural LIFO Order (newest to oldest)
-        - note that when an initial value is not given then `~R = ~D`
+        - note that when an initial value is not given then `~T = ~D`
         - if iterable empty & no initial value given, return `MB()`
-        - traditional FP type order given for function `f`
 
         """
         if initial is None:
             if not self._ca:
                 return MB()
-        return MB(self._ca.foldr(f, initial))
+        return MB(self._ca.foldr(swap(f), initial))
 
     def map[U](self, f: Callable[[D], U], /) -> LIFOQueue[U]:
         """Map Over the `LIFOQueue`.
