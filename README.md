@@ -1,16 +1,14 @@
 # Developer Tools - Queues
 
 Python package containing modules implementing queue-like data
-structures.
+structures. This project is part of the [Developer Tools for Python][4]
+**dtools.** namespace project.
 
 - **Repositories**
   - [dtools.queues][1] project on *PyPI*
   - [Source code][2] on *GitHub*
 - **Detailed documentation**
   - [Detailed API documentation][3] on *GH-Pages*
-
-This project is part of the [Developer Tools for Python][4] **dtools.**
-namespace project.
 
 ## Overview
 
@@ -21,10 +19,10 @@ Classic queue data structures:
   - *module* lifo: Last-In-First-Out Queue - LIFOQueue
   - *module* de: Double-Ended Queue - DEQueue
 
-They allow iterators to leisurely iterate over inaccessible copies of
-their current state while the queues themselves are free to safely
-mutate. They are designed to be reasonably "atomic" without introducing
-inordinate complexity.
+These queues allow iterators to leisurely iterate over inaccessible
+copies of their current state while the queues themselves are free to
+safely mutate. They are designed to be reasonably "atomic" without
+introducing inordinate complexity.
 
 All are more restrictive then the underlying circular array data
 structure used to implement them. Developers can focus on the queue's
